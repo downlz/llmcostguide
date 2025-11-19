@@ -21,7 +21,8 @@ const Layout = ({ children, ...headerProps }) => {
         maxWidth={false}
         sx={{
           flexGrow: 1,
-          py: { xs: 2, sm: 3, md: 4, lg: 6, xl: 8, '2xl': 10 },
+          pt: { xs: 2, sm: 3, md: 4, lg: 6, xl: 8, '2xl': 10 },
+          pb: { xs: 2, sm: 3, md: 4, lg: 4, xl: 4, '2xl': 4 },
           px: { xs: 2, sm: 3, md: 4, lg: 6, xl: 8, '2xl': 12 },
           maxWidth: {
             xs: '100%',
@@ -46,40 +47,6 @@ const Layout = ({ children, ...headerProps }) => {
         }}>
           {children}
         </Box>
-      </Container>
-      
-      {/* Information Section */}
-      <Container
-        maxWidth={false}
-        sx={{
-          py: { xs: 2, sm: 3, md: 4 },
-          px: { xs: 2, sm: 3, md: 4, lg: 6, xl: 8, '2xl': 12 },
-        }}
-      >
-        <Paper
-          sx={{
-            p: { xs: 3, sm: 4, md: 5 },
-            background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
-            border: '1px solid #dee2e6',
-            borderRadius: 2,
-          }}
-        >
-          <Box sx={{ textAlign: 'center' }}>
-            
-            <Typography
-              variant="body1"
-              sx={{
-                lineHeight: 1.7,
-                color: 'text.secondary',
-                fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
-                maxWidth: '100%',
-                mx: 'auto'
-              }}
-            >
-              Discover real-time pricing from OpenAI, Anthropic, Google, Mistral, Grok, Llama, Gemini, Claude and 50+ other providers. Save up to 90% on tokens by choosing the most cost-effective model for your use case. Get unbiased speed, price, and performance rankings tailored to your industry (coding, legal, marketing, research, customer support).
-            </Typography>
-          </Box>
-        </Paper>
       </Container>
       
       <Footer />
