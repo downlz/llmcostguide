@@ -131,13 +131,27 @@ function AppContent() {
             >
               LLM Cost Guide
             </Typography>
-            <Typography 
-              variant="h6" 
-              color="text.secondary"
-              sx={{ maxWidth: 600, mx: 'auto' }}
+            <Typography
+              variant="h5"
+              color="text.primary"
+              sx={{
+                maxWidth: { xs: '100%', sm: '90%', md: '90%', lg: '90%' },
+                mx: 'auto',
+                fontWeight: { xs: 400, sm: 400, md: 400, lg: 400 },
+                fontSize: {
+                  xs: '1rem',
+                  sm: '1.125rem',
+                  md: '1.25rem',
+                  lg: '1.375rem',
+                  xl: '1.5rem'
+                },
+                lineHeight: { xs: 1.5, sm: 1.6, md: 1.6, lg: 1.7 },
+                textAlign: 'center',
+                fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+                letterSpacing: { xs: '0.01em', sm: '0.005em', md: '0.005em', lg: '0.0025em' }
+              }}
             >
-              Compare pricing across different LLM providers. Make informed decisions 
-              about your AI implementation costs.
+              Instantly find, filter, and compare open-source & commercial LLM prices, performance specs, and real-world usability—zero signup, one search bar to pick the perfect model and slash AI costs.
             </Typography>
           </Box>
 
@@ -279,7 +293,7 @@ function AppContent() {
                   fontSize: { xs: '1.5rem', sm: '2rem', md: '2rem', lg: '2.5rem', xl: '2.5rem', '2xl': '3rem' }
                 }}
               >
-                {sortedData.length > 0 ? Math.min(...sortedData.map(m => m.input_price_per_1M_tokens || 0)).toFixed(4) : '0.0000'}
+                {sortedData.length > 0 ? Math.min(...sortedData.map(m => m.input_price_per_1m_tokens || 0)).toFixed(4) : '0.0000'}
               </Typography>
               <Typography
                 variant="body2"
@@ -298,6 +312,8 @@ function AppContent() {
             onSort={handleTableSort}
             sortConfig={sortConfig}
             error={error}
+            isSearching={isSearching}
+            searchQuery={searchQuery}
             emptyMessage={
               searchQuery.trim()
                 ? `No models found for "${searchQuery}"`
@@ -330,13 +346,13 @@ function AppContent() {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
               <SearchIcon sx={{ color: isConnected ? 'success.main' : 'error.main' }} />
               <Typography variant="h6" color={isConnected ? 'success.dark' : 'error.dark'}>
-                {isConnected ? 'Connected to Supabase' : 'Database Connection Error'}
+                {isConnected ? 'Model Price up-to-date' : 'Connectivity issues found'}
               </Typography>
             </Box>
             <Typography variant="body2" color="text.secondary">
               {isConnected
-                ? `Successfully connected to Supabase and loaded ${models?.length || 0} models from the database.`
-                : 'Failed to connect to Supabase. Please check your environment variables and database configuration.'
+                ? `Successfully fetched latest model pricing from providers`
+                : 'Failed to load updated model price. Retry again later.'
               }
               {error && (
                 <Box component="span" sx={{ display: 'block', mt: 1, color: 'error.main' }}>

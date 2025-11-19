@@ -42,8 +42,8 @@ export const MODEL_TYPES = [
 export const SORT_OPTIONS = [
   { label: 'Model Name', value: 'model_name' },
   { label: 'Provider', value: 'provider' },
-  { label: 'Input Price', value: 'input_price_per_1k_tokens' },
-  { label: 'Output Price', value: 'output_price_per_1k_tokens' },
+  { label: 'Input Price', value: 'input_price_per_1m_tokens' },
+  { label: 'Output Price', value: 'output_price_per_1m_tokens' },
   { label: 'Context Size', value: 'context_limit' },
   { label: 'Type', value: 'model_type' },
   { label: 'Added Date', value: 'added_on' },
@@ -69,19 +69,19 @@ export const TABLE_COLUMNS = [
     align: 'center',
   },
   {
-    id: 'input_price_per_1M_tokens',
+    id: 'input_price_per_1m_tokens',
     label: 'Input Price',
     sortable: true,
     align: 'right',
   },
   {
-    id: 'output_price_per_1M_tokens',
+    id: 'output_price_per_1m_tokens',
     label: 'Output Price',
     sortable: true,
     align: 'right',
   },
   {
-    id: 'caching_price_per_1M_tokens',
+    id: 'caching_price_per_1m_tokens',
     label: 'Caching Price',
     sortable: true,
     align: 'right',

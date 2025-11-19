@@ -37,8 +37,8 @@ const Footer = () => {
             sm: '100%',
             md: '100%',
             lg: '100%',
-            xl: '1200px',
-            '2xl': '1260px',
+            xl: '100%',
+            '2xl': '100%',
           },
           px: { xs: 2, sm: 3, md: 4, lg: 4, xl: 4, '2xl': 4 },
         }}
@@ -46,37 +46,10 @@ const Footer = () => {
         <Box sx={{ textAlign: 'center' }}>
           {/* Main Footer Content */}
           <Box sx={{ mb: 3 }}>
-            <Typography
-              variant="h6"
-              sx={{
-                fontWeight: 600,
-                mb: { xs: 1, sm: 1.5, md: 2, lg: 2, xl: 2, '2xl': 2 },
-                background: 'linear-gradient(45deg, ' + theme.palette.primary.main + ', ' + theme.palette.secondary.main + ')',
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                fontSize: { xs: '1.125rem', sm: '1.25rem', md: '1.25rem', lg: '1.25rem', xl: '1.25rem', '2xl': '1.25rem' }
-              }}
-            >
-              LLMCostGuide
-            </Typography>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{
-                maxWidth: { xs: '100%', sm: 500, md: 600, lg: 600, xl: 600, '2xl': 600 },
-                mx: 'auto',
-                mb: { xs: 1, sm: 1.5, md: 2, lg: 2, xl: 2, '2xl': 2 },
-                fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.875rem', lg: '0.875rem', xl: '0.875rem', '2xl': '0.875rem' }
-              }}
-            >
-              Making LLM model pricing transparent and accessible for everyone.
-              Compare costs across providers and make informed decisions about your AI implementation.
-            </Typography>
           </Box>
 
           <Divider sx={{ my: { xs: 2, sm: 2.5, md: 3, lg: 3, xl: 3, '2xl': 3 } }} />
-
+          
           {/* Links and Info */}
           <Box sx={{
             display: 'flex',

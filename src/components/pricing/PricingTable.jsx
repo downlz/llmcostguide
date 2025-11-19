@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Paper,
   Table,
@@ -15,38 +15,163 @@ import {
   useTheme,
   useMediaQuery,
   Fade,
+  CircularProgress,
+  Backdrop,
 } from '@mui/material';
 import {
   ArrowUpward as ArrowUpIcon,
   ArrowDownward as ArrowDownIcon,
+  Search as SearchIcon,
+  Sort as SortIcon,
 } from '@mui/icons-material';
-import { 
-  formatPricePer1KTokens, 
-  formatContextWindow, 
-  formatDate, 
-  getProviderBadge, 
+import {
+  formatPricePer1KTokens,
+  formatContextWindow,
+  formatDate,
+  getProviderBadge,
   getModelTypeConfig,
-  truncateText 
+  truncateText
 } from '../../utils/formatters.js';
 import { TABLE_COLUMNS } from '../../utils/constants.js';
 
 /**
- * Skeleton row component for loading state
+ * Modern Loading Overlay Component
  */
-const TableRowSkeleton = ({ columns }) => (
+const LoadingOverlay = ({ isLoading, isSearching, searchQuery }) => {
+  const theme = useTheme();
+  
+  if (!isLoading && !isSearching) return null;
+
+  return (
+    <Backdrop
+      open={true}
+      sx={{
+        color: '#fff',
+        zIndex: (theme) => theme.zIndex.drawer + 1,
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        backdropFilter: 'blur(4px)'
+      }}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 2,
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          boxShadow: theme.shadows[8],
+          maxWidth: 300,
+          textAlign: 'center'
+        }}
+      >
+        <Box sx={{ position: 'relative' }}>
+          <CircularProgress
+            size={48}
+            thickness={4}
+            sx={{
+              color: theme.palette.primary.main,
+            }}
+          />
+          {isSearching && (
+            <SearchIcon
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                fontSize: 20,
+                color: theme.palette.primary.main,
+                animation: 'pulse 1.5s ease-in-out infinite'
+              }}
+            />
+          )}
+        </Box>
+        <Box>
+          <Typography
+            variant="h6"
+            sx={{
+              color: theme.palette.text.primary,
+              fontWeight: 600,
+              mb: 0.5
+            }}
+          >
+            {isSearching ? 'Searching Models...' : 'Loading Data...'}
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{
+              color: theme.palette.text.secondary,
+              fontSize: '0.875rem'
+            }}
+          >
+            {isSearching
+              ? `Searching for "${searchQuery}"`
+              : ''}
+          </Typography>
+        </Box>
+      </Box>
+    </Backdrop>
+  );
+};
+
+/**
+ * Enhanced Skeleton row component for loading state
+ */
+const TableRowSkeleton = ({ columns, isSorting }) => (
   <TableRow>
     {columns.map((column, index) => (
       <TableCell key={column.id} align={column.align || 'left'}>
-        <Skeleton 
-          variant="text" 
-          width={column.width || '80%'} 
-          height={24}
-          animation="wave"
-        />
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Skeleton
+            variant="text"
+            width={column.width || '80%'}
+            height={24}
+            animation={isSorting ? false : "wave"}
+          />
+          {column.id === 'model_name' && (
+            <Skeleton
+              variant="text"
+              width="60%"
+              height={16}
+              animation={isSorting ? false : "wave"}
+            />
+          )}
+          {column.id === 'provider' && !column.hide && (
+            <Skeleton
+              variant="rectangular"
+              width={60}
+              height={24}
+              sx={{ borderRadius: 1 }}
+              animation={isSorting ? false : "wave"}
+            />
+          )}
+        </Box>
       </TableCell>
     ))}
   </TableRow>
 );
+
+/**
+ * Sort indicator component
+ */
+const SortIndicator = ({ isLoading, sortConfig, columnId }) => {
+  if (!isLoading || sortConfig?.key !== columnId) return null;
+  
+  return (
+    <Box
+      sx={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        ml: 1,
+        color: 'primary.main'
+      }}
+    >
+      <CircularProgress size={16} thickness={4} />
+    </Box>
+  );
+};
 
 /**
  * Pricing table component with sorting and responsive design
@@ -59,16 +184,23 @@ const PricingTable = ({
   error,
   emptyMessage = 'No models found',
   showSkeleton = true,
+  isSearching = false,
+  searchQuery = '',
 }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [isSorting, setIsSorting] = React.useState(false);
 
   // Handle sort click
   const handleSortClick = (columnId) => {
-    if (onSort) {
+    if (onSort && !isLoading) {
+      setIsSorting(true);
       const currentDirection = sortConfig?.key === columnId ? sortConfig.direction : null;
       const nextDirection = currentDirection === 'asc' ? 'desc' : 'asc';
       onSort(columnId, nextDirection);
+      
+      // Reset sorting state after a short delay
+      setTimeout(() => setIsSorting(false), 300);
     }
   };
 
@@ -80,23 +212,59 @@ const PricingTable = ({
   // Render mobile card view
   const renderMobileView = () => (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-      {isLoading && showSkeleton ? (
+      {(isLoading || isSearching) && showSkeleton ? (
         // Skeleton cards for loading
-        Array.from({ length: 5 }).map((_, index) => (
-          <Paper key={index} sx={{ p: 2 }}>
+        Array.from({ length: isSearching ? 3 : 5 }).map((_, index) => (
+          <Paper key={index} sx={{ p: 2, opacity: isSearching ? 0.7 : 1 }}>
             <Box sx={{ mb: 2 }}>
-              <Skeleton variant="text" width="60%" height={32} />
-              <Skeleton variant="text" width="40%" height={20} />
+              <Skeleton
+                variant="text"
+                width="60%"
+                height={32}
+                animation={isSorting ? false : "wave"}
+              />
+              <Skeleton
+                variant="text"
+                width="40%"
+                height={20}
+                animation={isSorting ? false : "wave"}
+              />
             </Box>
             <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
-              <Skeleton variant="rectangular" width={60} height={24} />
-              <Skeleton variant="rectangular" width={60} height={24} />
+              <Skeleton
+                variant="rectangular"
+                width={60}
+                height={24}
+                animation={isSorting ? false : "wave"}
+              />
+              <Skeleton
+                variant="rectangular"
+                width={60}
+                height={24}
+                animation={isSorting ? false : "wave"}
+              />
             </Box>
             <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1 }}>
-              <Skeleton variant="text" height={20} />
-              <Skeleton variant="text" height={20} />
-              <Skeleton variant="text" height={20} />
-              <Skeleton variant="text" height={20} />
+              <Skeleton
+                variant="text"
+                height={20}
+                animation={isSorting ? false : "wave"}
+              />
+              <Skeleton
+                variant="text"
+                height={20}
+                animation={isSorting ? false : "wave"}
+              />
+              <Skeleton
+                variant="text"
+                height={20}
+                animation={isSorting ? false : "wave"}
+              />
+              <Skeleton
+                variant="text"
+                height={20}
+                animation={isSorting ? false : "wave"}
+              />
             </Box>
           </Paper>
         ))
@@ -105,15 +273,21 @@ const PricingTable = ({
           <Typography variant="h6" color="text.secondary">
             {emptyMessage}
           </Typography>
+          {isSearching && (
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              Try adjusting your search terms
+            </Typography>
+          )}
         </Paper>
       ) : (
         // Model cards
         models.map((model, index) => (
           <Fade in={true} timeout={300 + index * 100} key={model.id}>
-            <Paper 
-              sx={{ 
+            <Paper
+              sx={{
                 p: 2,
                 border: '1px solid ' + theme.palette.divider,
+                opacity: isSearching ? 0.8 : 1,
                 '&:hover': {
                   boxShadow: theme.shadows[4],
                   transform: 'translateY(-2px)',
@@ -123,9 +297,9 @@ const PricingTable = ({
             >
               {/* Model header */}
               <Box sx={{ mb: 2 }}>
-                <Typography 
-                  variant="h6" 
-                  sx={{ 
+                <Typography
+                  variant="h6"
+                  sx={{
                     fontWeight: 600,
                     color: theme.palette.text.primary,
                     mb: 0.5
@@ -170,7 +344,7 @@ const PricingTable = ({
                     Input Price
                   </Typography>
                   <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                    {formatPricePer1KTokens(model.input_price_per_1M_tokens)}
+                    {formatPricePer1KTokens(model.input_price_per_1m_tokens)}
                   </Typography>
                 </Box>
                 <Box>
@@ -178,7 +352,7 @@ const PricingTable = ({
                     Output Price
                   </Typography>
                   <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                    {formatPricePer1KTokens(model.output_price_per_1M_tokens)}
+                    {formatPricePer1KTokens(model.output_price_per_1m_tokens)}
                   </Typography>
                 </Box>
                 <Box>
@@ -284,10 +458,14 @@ const PricingTable = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {isLoading && showSkeleton ? (
-              // Skeleton rows
-              Array.from({ length: 10 }).map((_, index) => (
-                <TableRowSkeleton key={'skeleton-' + index} columns={TABLE_COLUMNS} />
+            {(isLoading || isSearching) && showSkeleton ? (
+              // Enhanced skeleton rows with sorting state
+              Array.from({ length: isSearching ? 5 : 10 }).map((_, index) => (
+                <TableRowSkeleton
+                  key={'skeleton-' + index}
+                  columns={TABLE_COLUMNS}
+                  isSorting={isSorting}
+                />
               ))
             ) : models.length === 0 ? (
               <TableRow>
@@ -299,6 +477,11 @@ const PricingTable = ({
                   <Typography variant="h6" color="text.secondary">
                     {emptyMessage}
                   </Typography>
+                  {isSearching && (
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                      Try adjusting your search terms
+                    </Typography>
+                  )}
                 </TableCell>
               </TableRow>
             ) : (
@@ -307,6 +490,7 @@ const PricingTable = ({
                 <Fade in={true} timeout={300 + index * 50} key={model.id}>
                   <TableRow
                     sx={{
+                      opacity: isSearching ? 0.8 : 1,
                       '&:hover': {
                         backgroundColor: theme.palette.action.hover,
                       },
@@ -368,21 +552,21 @@ const PricingTable = ({
                     {/* Input Price */}
                     <TableCell align="right">
                       <Typography variant="body2" sx={{ fontWeight: 500, fontSize: { xs: '0.875rem', sm: '0.875rem', md: '0.875rem', lg: '0.875rem', xl: '0.875rem', '2xl': '1rem' } }}>
-                        {formatPricePer1KTokens(model.input_price_per_1M_tokens)}
+                        {formatPricePer1KTokens(model.input_price_per_1m_tokens)}
                       </Typography>
                     </TableCell>
 
                     {/* Output Price */}
                     <TableCell align="right">
                       <Typography variant="body2" sx={{ fontWeight: 500, fontSize: { xs: '0.875rem', sm: '0.875rem', md: '0.875rem', lg: '0.875rem', xl: '0.875rem', '2xl': '1rem' } }}>
-                        {formatPricePer1KTokens(model.output_price_per_1M_tokens)}
+                        {formatPricePer1KTokens(model.output_price_per_1m_tokens)}
                       </Typography>
                     </TableCell>
 
                     {/* Caching Price */}
                     <TableCell align="right">
                       <Typography variant="body2" sx={{ fontWeight: 500, fontSize: { xs: '0.875rem', sm: '0.875rem', md: '0.875rem', lg: '0.875rem', xl: '0.875rem', '2xl': '1rem' } }}>
-                        {formatPricePer1KTokens(model.caching_price_per_1M_tokens)}
+                        {formatPricePer1KTokens(model.caching_price_per_1m_tokens)}
                       </Typography>
                     </TableCell>
 
@@ -432,7 +616,14 @@ const PricingTable = ({
   }
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '100%', position: 'relative' }}>
+      {/* Modern Loading Overlay */}
+      <LoadingOverlay
+        isLoading={isLoading}
+        isSearching={isSearching}
+        searchQuery={searchQuery}
+      />
+      
       {isMobile ? renderMobileView() : renderDesktopView()}
     </Box>
   );

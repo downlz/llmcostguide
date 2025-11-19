@@ -5,16 +5,44 @@ import { DateTime } from 'luxon';
  */
 
 /**
+ * Clean and convert price value to number
+ * @param {any} price - Price value (could be string, number, etc.)
+ * @returns {number|null} Cleaned numeric value or null
+ */
+const cleanPriceValue = (price) => {
+  if (price === null || price === undefined) {
+    return null;
+  }
+  
+  // Handle string values with currency symbols
+  if (typeof price === 'string') {
+    // Remove currency symbols, spaces, and convert to number
+    const cleaned = price.replace(/[$,\s]/g, '').trim();
+    const numValue = parseFloat(cleaned);
+    return isNaN(numValue) ? null : numValue;
+  }
+  
+  // Handle numeric values
+  if (typeof price === 'number') {
+    return isNaN(price) ? null : price;
+  }
+  
+  return null;
+};
+
+/**
  * Format price as currency
- * @param {number} price - Price value
+ * @param {any} price - Price value (number or string)
  * @returns {string} Formatted price string
  */
 export const formatPrice = (price) => {
-  if (price === null || price === undefined || isNaN(price)) {
+  const cleanPrice = cleanPriceValue(price);
+  
+  if (cleanPrice === null) {
     return 'N/A';
   }
   
-  if (price === 0) {
+  if (cleanPrice === 0) {
     return 'Free';
   }
   
@@ -23,24 +51,27 @@ export const formatPrice = (price) => {
     currency: 'USD',
     minimumFractionDigits: 4,
     maximumFractionDigits: 6,
-  }).format(price);
+  }).format(cleanPrice);
 };
 
 /**
  * Format price per 1K tokens
- * @param {number} price - Price per token
- * @returns {string} Formatted price per 1K tokens
+ * @param {any} price - Price per 1M tokens (from database, could be string)
+ * @returns {string} Formatted price value (raw from DB)
  */
 export const formatPricePer1KTokens = (price) => {
-  if (price === null || price === undefined || isNaN(price)) {
+  const cleanPrice = cleanPriceValue(price);
+  
+  if (cleanPrice === null) {
     return 'N/A';
   }
   
-  if (price === 0) {
+  if (cleanPrice === 0) {
     return 'Free';
   }
   
-  return `${formatPrice(price)}/1K tokens`;
+  // Return the raw value from database, properly formatted as currency
+  return formatPrice(cleanPrice);
 };
 
 /**
