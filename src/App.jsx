@@ -149,41 +149,143 @@ function AppContent() {
                 xs: '1fr',
                 sm: 'repeat(2, 1fr)',
                 md: 'repeat(2, 1fr)',
-                lg: 'repeat(4, 1fr)'
+                lg: 'repeat(4, 1fr)',
+                xl: 'repeat(4, 1fr)',
+                '2xl': 'repeat(5, 1fr)'
               },
-              gap: 2,
-              mb: 4
+              gap: { xs: 1.5, sm: 2, md: 2.5, lg: 3, xl: 3, '2xl': 4 },
+              mb: 4,
+              maxWidth: {
+                xs: '100%',
+                sm: '100%',
+                md: '100%',
+                lg: '100%',
+                xl: '100%',
+                '2xl': '1400px',
+              },
             }}
           >
-            <Paper sx={{ p: 3, textAlign: 'center' }}>
-              <Typography variant="h4" color="primary" sx={{ fontWeight: 600 }}>
+            <Paper
+              sx={{
+                p: { xs: 2, sm: 2.5, md: 3, lg: 3.5, xl: 4, '2xl': 4.5 },
+                textAlign: 'center',
+                height: 'fit-content',
+                minHeight: { xs: '100px', sm: '110px', md: '120px', lg: '130px', xl: '140px', '2xl': '150px' },
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Typography
+                variant="h4"
+                color="primary"
+                sx={{
+                  fontWeight: 600,
+                  mb: 0.5,
+                  fontSize: { xs: '1.5rem', sm: '2rem', md: '2rem', lg: '2.5rem', xl: '2.5rem', '2xl': '3rem' }
+                }}
+              >
                 {paginationInfo?.total || sortedData.length}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.875rem', lg: '0.875rem', xl: '1rem', '2xl': '1.125rem' } }}
+              >
                 Total Models
               </Typography>
             </Paper>
-            <Paper sx={{ p: 3, textAlign: 'center' }}>
-              <Typography variant="h4" color="secondary" sx={{ fontWeight: 600 }}>
+            <Paper
+              sx={{
+                p: { xs: 2, sm: 2.5, md: 3, lg: 3.5, xl: 4, '2xl': 4.5 },
+                textAlign: 'center',
+                height: 'fit-content',
+                minHeight: { xs: '100px', sm: '110px', md: '120px', lg: '130px', xl: '140px', '2xl': '150px' },
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Typography
+                variant="h4"
+                color="secondary"
+                sx={{
+                  fontWeight: 600,
+                  mb: 0.5,
+                  fontSize: { xs: '1.5rem', sm: '2rem', md: '2rem', lg: '2.5rem', xl: '2.5rem', '2xl': '3rem' }
+                }}
+              >
                 {new Set(sortedData.map(m => m.provider)).size}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.875rem', lg: '0.875rem', xl: '1rem', '2xl': '1.125rem' } }}
+              >
                 Providers
               </Typography>
             </Paper>
-            <Paper sx={{ p: 3, textAlign: 'center' }}>
-              <Typography variant="h4" color="success.main" sx={{ fontWeight: 600 }}>
+            <Paper
+              sx={{
+                p: { xs: 2, sm: 2.5, md: 3, lg: 3.5, xl: 4, '2xl': 4.5 },
+                textAlign: 'center',
+                height: 'fit-content',
+                minHeight: { xs: '100px', sm: '110px', md: '120px', lg: '130px', xl: '140px', '2xl': '150px' },
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Typography
+                variant="h4"
+                color="success.main"
+                sx={{
+                  fontWeight: 600,
+                  mb: 0.5,
+                  fontSize: { xs: '1.5rem', sm: '2rem', md: '2rem', lg: '2.5rem', xl: '2.5rem', '2xl': '3rem' }
+                }}
+              >
                 {new Set(sortedData.map(m => m.model_type)).size}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.875rem', lg: '0.875rem', xl: '1rem', '2xl': '1.125rem' } }}
+              >
                 Model Types
               </Typography>
             </Paper>
-            <Paper sx={{ p: 3, textAlign: 'center' }}>
-              <Typography variant="h4" color="info.main" sx={{ fontWeight: 600 }}>
-                {sortedData.length > 0 ? Math.min(...sortedData.map(m => m.input_price_per_1k_tokens || 0)).toFixed(4) : '0.0000'}
+            <Paper
+              sx={{
+                p: { xs: 2, sm: 2.5, md: 3, lg: 3.5, xl: 4, '2xl': 4.5 },
+                textAlign: 'center',
+                height: 'fit-content',
+                minHeight: { xs: '100px', sm: '110px', md: '120px', lg: '130px', xl: '140px', '2xl': '150px' },
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Typography
+                variant="h4"
+                color="info.main"
+                sx={{
+                  fontWeight: 600,
+                  mb: 0.5,
+                  fontSize: { xs: '1.5rem', sm: '2rem', md: '2rem', lg: '2.5rem', xl: '2.5rem', '2xl': '3rem' }
+                }}
+              >
+                {sortedData.length > 0 ? Math.min(...sortedData.map(m => m.input_price_per_1M_tokens || 0)).toFixed(4) : '0.0000'}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.875rem', lg: '0.875rem', xl: '1rem', '2xl': '1.125rem' } }}
+              >
                 Lowest $/1K Tokens
               </Typography>
             </Paper>

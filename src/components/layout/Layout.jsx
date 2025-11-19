@@ -18,14 +18,32 @@ const Layout = ({ children, ...headerProps }) => {
     >
       <Header {...headerProps} />
       <Container
-        maxWidth="xl"
+        maxWidth={false}
         sx={{
           flexGrow: 1,
-          py: 3,
-          px: { xs: 2, sm: 3, md: 4, lg: 6 },
+          py: { xs: 2, sm: 3, md: 4, lg: 6, xl: 8, '2xl': 10 },
+          px: { xs: 2, sm: 3, md: 4, lg: 6, xl: 8, '2xl': 12 },
+          maxWidth: {
+            xs: '100%',
+            sm: '100%',
+            md: '100%',
+            lg: '100%',
+            xl: '100%',
+            '2xl': '1400px',
+          },
         }}
       >
-        <Box sx={{ width: '100%' }}>
+        <Box sx={{
+          width: '100%',
+          maxWidth: {
+            xs: '100%',
+            md: '100%',
+            lg: '100%',
+            xl: '100%',
+            '2xl': '1400px',
+          },
+          mx: 'auto',
+        }}>
           {children}
         </Box>
       </Container>

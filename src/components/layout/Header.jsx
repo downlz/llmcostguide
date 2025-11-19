@@ -45,23 +45,44 @@ const Header = ({
         borderBottom: '1px solid ' + theme.palette.divider,
       }}
     >
-      <Container maxWidth="xl">
-        <Toolbar sx={{ px: { xs: 2, sm: 2, md: 3 }, py: 1 }}>
+      <Container
+        maxWidth={false}
+        sx={{
+          width: '100%',
+          maxWidth: {
+            xs: '100%',
+            sm: '100%',
+            md: '100%',
+            lg: '100%',
+            xl: '100%',
+          },
+        }}
+      >
+        <Toolbar sx={{
+          px: { xs: 2, sm: 2, md: 3, lg: 4, xl: 6, '2xl': 8 },
+          py: { xs: 1, sm: 1.5, md: 2, lg: 2, xl: 2.5, '2xl': 3 },
+          minHeight: { xs: '64px', sm: '70px', md: '80px', lg: '90px', xl: '100px', '2xl': '110px' },
+          '&.MuiToolbar-root': {
+            minHeight: '1px',
+          },
+        }}>
           {/* Logo and App Name */}
-          <Box 
-            sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
               flexGrow: isMobile ? 1 : 0,
-              mr: 2 
+              mr: { xs: 1, sm: 2, md: 3, lg: 4, xl: 5 },
+              minWidth: 'fit-content',
+              flexShrink: 0,
             }}
           >
-            <WalletIcon 
-              sx={{ 
-                mr: 1, 
+            <WalletIcon
+              sx={{
+                mr: { xs: 0.5, sm: 1, md: 1, lg: 1.5, xl: 2 },
                 color: theme.palette.primary.main,
-                fontSize: '1.8rem'
-              }} 
+                fontSize: { xs: '1.2rem', sm: '1.5rem', md: '1.8rem', lg: '2rem', xl: '2.2rem' }
+              }}
             />
             <Typography
               variant="h6"
@@ -72,7 +93,9 @@ const Header = ({
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
-                display: isMobile ? 'none' : 'block'
+                display: isMobile ? 'none' : 'block',
+                whiteSpace: 'nowrap',
+                fontSize: { xs: '1rem', sm: '1.25rem', md: '1.25rem', lg: '1.5rem', xl: '2rem' }
               }}
             >
               LLM Cost Guide
@@ -81,9 +104,31 @@ const Header = ({
 
           {/* Desktop Layout */}
           {!isMobile && (
-            <>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: { xs: 2, sm: 3, md: 3, lg: 4, xl: 5, '2xl': 6 },
+                flexGrow: 1,
+                justifyContent: 'flex-end',
+                maxWidth: {
+                  xs: '100%',
+                  sm: '100%',
+                  md: '100%',
+                  lg: '100%',
+                  xl: '100%',
+                },
+              }}
+            >
               {/* Provider Selector */}
-              <Box sx={{ flexGrow: 0, mr: 3, minWidth: 250 }}>
+              <Box
+                sx={{
+                  flexGrow: 0,
+                  mr: { xs: 2, sm: 3, md: 3, lg: 4, xl: 5 },
+                  minWidth: { xs: 200, sm: 250, md: 280, lg: 320, xl: 380, '2xl': 420 },
+                  maxWidth: { xs: 300, sm: 350, md: 400, lg: 450, xl: 500, '2xl': 550 },
+                }}
+              >
                 <ProviderSelector
                   value={selectedProviders}
                   onChange={onProviderChange}
@@ -92,14 +137,34 @@ const Header = ({
               </Box>
 
               {/* Search Bar */}
-              <Box sx={{ flexGrow: 1, maxWidth: 600 }}>
+              <Box
+                sx={{
+                  flexGrow: 1,
+                  maxWidth: {
+                    xs: 400,
+                    sm: 500,
+                    md: 600,
+                    lg: 700,
+                    xl: 800,
+                    '2xl': 900
+                  },
+                  minWidth: {
+                    xs: 300,
+                    sm: 400,
+                    md: 500,
+                    lg: 600,
+                    xl: 700,
+                    '2xl': 800
+                  },
+                }}
+              >
                 <SearchBar
                   value={searchQuery}
                   onChange={onSearchChange}
                   placeholder="Search models, providers..."
                 />
               </Box>
-            </>
+            </Box>
           )}
 
           {/* Mobile Menu Button */}

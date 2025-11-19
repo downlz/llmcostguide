@@ -115,6 +115,7 @@ export const BREAKPOINTS = {
   mobile: 600,
   tablet: 1024,
   desktop: 1440,
+  ultrawide: 1920,
 };
 
 export const ANIMATION = {

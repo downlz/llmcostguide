@@ -199,150 +199,222 @@ const PricingTable = ({
 
   // Render desktop table view
   const renderDesktopView = () => (
-    <TableContainer component={Paper} elevation={1}>
-      <Table sx={{ minWidth: 800, tableLayout: 'auto' }}>
-        <TableHead>
-          <TableRow>
-            {TABLE_COLUMNS.map((column) => (
-              <TableCell
-                key={column.id}
-                align={column.align || 'left'}
-                sx={{
-                  fontWeight: 600,
-                  backgroundColor: theme.palette.grey[50],
-                  borderBottom: '2px solid ' + theme.palette.divider,
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  maxWidth: '200px',
-                }}
-              >
-                <TableSortLabel
-                  active={sortConfig?.key === column.id}
-                  direction={getSortDirection(column.id) || 'asc'}
-                  onClick={() => handleSortClick(column.id)}
-                >
-                  {column.label}
-                </TableSortLabel>
-              </TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {isLoading && showSkeleton ? (
-            // Skeleton rows
-            Array.from({ length: 10 }).map((_, index) => (
-              <TableRowSkeleton key={'skeleton-' + index} columns={TABLE_COLUMNS} />
-            ))
-          ) : models.length === 0 ? (
+    <Box sx={{ width: '100%', overflowX: 'auto' }}>
+      <TableContainer
+        component={Paper}
+        elevation={1}
+        sx={{
+          minWidth: '100%',
+          overflow: 'hidden',
+        }}
+      >
+        <Table
+          sx={{
+            minWidth: '100%',
+            tableLayout: 'auto',
+            '& .MuiTableCell-root': {
+              wordWrap: 'break-word',
+              whiteSpace: 'normal',
+              padding: {
+                xs: 1,
+                sm: 1.5,
+                md: 2,
+                lg: 2,
+                xl: 2,
+                '2xl': 2.5,
+              },
+            },
+          }}
+        >
+          <TableHead>
             <TableRow>
-              <TableCell 
-                colSpan={TABLE_COLUMNS.length} 
-                align="center" 
-                sx={{ py: 4 }}
-              >
-                <Typography variant="h6" color="text.secondary">
-                  {emptyMessage}
-                </Typography>
-              </TableCell>
+              {TABLE_COLUMNS.map((column) => {
+                // Dynamic column widths for better responsiveness
+                const columnStyles = {
+                  width: {
+                    xs: column.id === 'model_name' ? '40%' : '15%',
+                    sm: column.id === 'model_name' ? '35%' : '15%',
+                    md: column.id === 'model_name' ? '30%' : '12%',
+                    lg: column.id === 'model_name' ? '25%' : '12%',
+                    xl: column.id === 'model_name' ? '20%' : '11%',
+                    '2xl': column.id === 'model_name' ? '18%' : '10%',
+                  },
+                  minWidth: {
+                    xs: column.id === 'model_name' ? '200px' : '100px',
+                    sm: column.id === 'model_name' ? '200px' : '110px',
+                    md: column.id === 'model_name' ? '250px' : '120px',
+                    lg: column.id === 'model_name' ? '300px' : '130px',
+                    xl: column.id === 'model_name' ? '350px' : '140px',
+                    '2xl': column.id === 'model_name' ? '400px' : '150px',
+                  },
+                  maxWidth: {
+                    xs: column.id === 'model_name' ? '300px' : '150px',
+                    sm: column.id === 'model_name' ? '350px' : '180px',
+                    md: column.id === 'model_name' ? '400px' : '200px',
+                    lg: column.id === 'model_name' ? '450px' : '220px',
+                    xl: column.id === 'model_name' ? '500px' : '250px',
+                    '2xl': column.id === 'model_name' ? '600px' : '300px',
+                  },
+                };
+
+                return (
+                  <TableCell
+                    key={column.id}
+                    align={column.align || 'left'}
+                    sx={{
+                      fontWeight: 600,
+                      backgroundColor: theme.palette.grey[50],
+                      borderBottom: '2px solid ' + theme.palette.divider,
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      ...columnStyles,
+                    }}
+                  >
+                    <TableSortLabel
+                      active={sortConfig?.key === column.id}
+                      direction={getSortDirection(column.id) || 'asc'}
+                      onClick={() => handleSortClick(column.id)}
+                    >
+                      {column.label}
+                    </TableSortLabel>
+                  </TableCell>
+                );
+              })}
             </TableRow>
-          ) : (
-            // Data rows
-            models.map((model, index) => (
-              <Fade in={true} timeout={300 + index * 50} key={model.id}>
-                <TableRow
-                  sx={{
-                    '&:hover': {
-                      backgroundColor: theme.palette.action.hover,
-                    },
-                    '&:last-child td, &:last-child th': {
-                      border: 0,
-                    },
-                  }}
+          </TableHead>
+          <TableBody>
+            {isLoading && showSkeleton ? (
+              // Skeleton rows
+              Array.from({ length: 10 }).map((_, index) => (
+                <TableRowSkeleton key={'skeleton-' + index} columns={TABLE_COLUMNS} />
+              ))
+            ) : models.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={TABLE_COLUMNS.length}
+                  align="center"
+                  sx={{ py: 4 }}
                 >
-                  {/* Model Name */}
-                  <TableCell>
-                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                      {model.model_name}
-                    </Typography>
-                    {model.description && (
-                      <Typography 
-                        variant="caption" 
-                        color="text.secondary"
-                        sx={{ display: 'block', mt: 0.5 }}
-                      >
-                        {truncateText(model.description, 60)}
-                      </Typography>
-                    )}
-                  </TableCell>
-
-                  {/* Provider */}
-                  <TableCell align="center">
-                    <Chip
-                      label={model.provider || 'Unknown'}
-                      size="small"
-                      sx={{
-                        backgroundColor: getProviderBadge(model.provider || 'Unknown').backgroundColor,
-                        color: getProviderBadge(model.provider || 'Unknown').textColor,
+                  <Typography variant="h6" color="text.secondary">
+                    {emptyMessage}
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            ) : (
+              // Data rows
+              models.map((model, index) => (
+                <Fade in={true} timeout={300 + index * 50} key={model.id}>
+                  <TableRow
+                    sx={{
+                      '&:hover': {
+                        backgroundColor: theme.palette.action.hover,
+                      },
+                      '&:last-child td, &:last-child th': {
+                        border: 0,
+                      },
+                    }}
+                  >
+                    {/* Model Name */}
+                    <TableCell sx={{
+                      minWidth: { xs: '250px', sm: '280px', md: '300px', lg: '320px', xl: '350px', '2xl': '400px' },
+                      maxWidth: { xs: '300px', sm: '350px', md: '400px', lg: '450px', xl: '500px', '2xl': '600px' }
+                    }}>
+                      <Typography variant="body2" sx={{
                         fontWeight: 500,
-                      }}
-                    />
-                  </TableCell>
+                        lineHeight: 1.4,
+                        fontSize: { xs: '0.875rem', sm: '0.875rem', md: '0.875rem', lg: '0.875rem', xl: '0.875rem', '2xl': '1rem' }
+                      }}>
+                        {model.model_name}
+                      </Typography>
+                      {model.description && (
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{
+                            display: 'block',
+                            mt: 0.5,
+                            lineHeight: 1.3,
+                            fontSize: { xs: '0.75rem', sm: '0.75rem', md: '0.75rem', lg: '0.75rem', xl: '0.75rem', '2xl': '0.875rem' }
+                          }}
+                        >
+                          {truncateText(model.description, 80)}
+                        </Typography>
+                      )}
+                    </TableCell>
 
-                  {/* Context */}
-                  <TableCell align="center">
-                    <Typography variant="body2">
-                      {formatContextWindow(model.context_limit)}
-                    </Typography>
-                  </TableCell>
+                    {/* Provider */}
+                    <TableCell align="center">
+                      <Chip
+                        label={model.provider || 'Unknown'}
+                        size="small"
+                        sx={{
+                          backgroundColor: getProviderBadge(model.provider || 'Unknown').backgroundColor,
+                          color: getProviderBadge(model.provider || 'Unknown').textColor,
+                          fontWeight: 500,
+                          fontSize: { xs: '0.75rem', sm: '0.75rem', md: '0.75rem', lg: '0.75rem', xl: '0.75rem', '2xl': '0.875rem' },
+                          height: { xs: '24px', sm: '24px', md: '24px', lg: '24px', xl: '24px', '2xl': '26px' },
+                        }}
+                      />
+                    </TableCell>
 
-                  {/* Input Price */}
-                  <TableCell align="right">
-                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                      {formatPricePer1KTokens(model.input_price_per_1M_tokens)}
-                    </Typography>
-                  </TableCell>
+                    {/* Context */}
+                    <TableCell align="center">
+                      <Typography variant="body2" sx={{ fontSize: { xs: '0.875rem', sm: '0.875rem', md: '0.875rem', lg: '0.875rem', xl: '0.875rem', '2xl': '1rem' } }}>
+                        {formatContextWindow(model.context_limit)}
+                      </Typography>
+                    </TableCell>
 
-                  {/* Output Price */}
-                  <TableCell align="right">
-                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                      {formatPricePer1KTokens(model.output_price_per_1M_tokens)}
-                    </Typography>
-                  </TableCell>
+                    {/* Input Price */}
+                    <TableCell align="right">
+                      <Typography variant="body2" sx={{ fontWeight: 500, fontSize: { xs: '0.875rem', sm: '0.875rem', md: '0.875rem', lg: '0.875rem', xl: '0.875rem', '2xl': '1rem' } }}>
+                        {formatPricePer1KTokens(model.input_price_per_1M_tokens)}
+                      </Typography>
+                    </TableCell>
 
-                  {/* Caching Price */}
-                  <TableCell align="right">
-                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                      {formatPricePer1KTokens(model.caching_price_per_1M_tokens)}
-                    </Typography>
-                  </TableCell>
+                    {/* Output Price */}
+                    <TableCell align="right">
+                      <Typography variant="body2" sx={{ fontWeight: 500, fontSize: { xs: '0.875rem', sm: '0.875rem', md: '0.875rem', lg: '0.875rem', xl: '0.875rem', '2xl': '1rem' } }}>
+                        {formatPricePer1KTokens(model.output_price_per_1M_tokens)}
+                      </Typography>
+                    </TableCell>
 
-                  {/* Type */}
-                  <TableCell align="center">
-                    <Chip
-                      icon={<span>{getModelTypeConfig(model.model_type || 'Text').icon}</span>}
-                      label={model.model_type || 'Text'}
-                      size="small"
-                      sx={{
-                        backgroundColor: getModelTypeConfig(model.model_type || 'Text').backgroundColor,
-                        color: getModelTypeConfig(model.model_type || 'Text').color,
-                      }}
-                    />
-                  </TableCell>
+                    {/* Caching Price */}
+                    <TableCell align="right">
+                      <Typography variant="body2" sx={{ fontWeight: 500, fontSize: { xs: '0.875rem', sm: '0.875rem', md: '0.875rem', lg: '0.875rem', xl: '0.875rem', '2xl': '1rem' } }}>
+                        {formatPricePer1KTokens(model.caching_price_per_1M_tokens)}
+                      </Typography>
+                    </TableCell>
 
-                  {/* Added On */}
-                  <TableCell align="center">
-                    <Typography variant="body2">
-                      {formatDate(model.added_on)}
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-              </Fade>
-            ))
-          )}
-        </TableBody>
-      </Table>
-    </TableContainer>
+                    {/* Type */}
+                    <TableCell align="center">
+                      <Chip
+                        icon={<span style={{ fontSize: '0.75rem' }}>{getModelTypeConfig(model.model_type || 'Text').icon}</span>}
+                        label={model.model_type || 'Text'}
+                        size="small"
+                        sx={{
+                          backgroundColor: getModelTypeConfig(model.model_type || 'Text').backgroundColor,
+                          color: getModelTypeConfig(model.model_type || 'Text').color,
+                          fontSize: { xs: '0.75rem', sm: '0.75rem', md: '0.75rem', lg: '0.75rem', xl: '0.75rem', '2xl': '0.875rem' },
+                          height: { xs: '24px', sm: '24px', md: '24px', lg: '24px', xl: '24px', '2xl': '26px' },
+                        }}
+                      />
+                    </TableCell>
+
+                    {/* Added On */}
+                    <TableCell align="center">
+                      <Typography variant="body2" sx={{ fontSize: { xs: '0.875rem', sm: '0.875rem', md: '0.875rem', lg: '0.875rem', xl: '0.875rem', '2xl': '1rem' } }}>
+                        {formatDate(model.added_on)}
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                </Fade>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
   );
 
   // Error state

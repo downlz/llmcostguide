@@ -46,24 +46,63 @@ const Pagination = ({
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        gap: 2,
-        mt: 3,
+        gap: { xs: 1, sm: 1.5, md: 2, lg: 2, xl: 3, '2xl': 4 },
+        mt: { xs: 2, sm: 3, md: 3, lg: 4, xl: 4, '2xl': 5 },
         mb: 2,
-        flexWrap: 'wrap',
+        flexWrap: { xs: 'wrap', sm: 'wrap', md: 'nowrap' },
+        maxWidth: {
+          xs: '100%',
+          sm: '100%',
+          md: '100%',
+          lg: '100%',
+          xl: '100%',
+          '2xl': '1400px',
+        },
       }}
     >
       {/* Results Info */}
-      <Typography variant="body2" color="text.secondary">
+      <Typography
+        variant="body2"
+        color="text.secondary"
+        sx={{
+          flexShrink: 0,
+          textAlign: { xs: 'center', sm: 'left' },
+          width: { xs: '100%', sm: 'auto', md: 'auto', lg: 'auto', xl: 'auto' },
+          fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.875rem', lg: '0.875rem', xl: '1rem', '2xl': '1.125rem' }
+        }}
+      >
         Showing {startIndex}-{endIndex} of {totalCount} results
       </Typography>
 
       {/* Page Size Selector */}
       {showPageSizeSelector && (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography variant="body2" color="text.secondary" sx={{ mr: 1 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: { xs: 0.5, sm: 1, md: 1, lg: 1, xl: 1 },
+            flexShrink: 0,
+          }}
+        >
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{
+              mr: { xs: 0.5, sm: 1, md: 1, lg: 1, xl: 1 },
+              fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.875rem', lg: '0.875rem', xl: '1rem', '2xl': '1.125rem' }
+            }}
+          >
             Per page:
           </Typography>
-          <FormControl size="small" sx={{ minWidth: 80 }}>
+          <FormControl
+            size="small"
+            sx={{
+              minWidth: { xs: 70, sm: 80, md: 80, lg: 90, xl: 100, '2xl': 110 },
+              '& .MuiSelect-select': {
+                padding: { xs: '6px 8px', sm: '8px 12px', md: '8px 12px', lg: '10px 14px', xl: '12px 16px', '2xl': '14px 18px' },
+              }
+            }}
+          >
             <Select
               value={pageSize}
               onChange={handlePageSizeChange}
@@ -81,23 +120,26 @@ const Pagination = ({
       )}
 
       {/* Pagination Controls */}
-      <MuiPagination
-        count={totalPages}
-        page={currentPage}
-        onChange={handlePageChange}
-        disabled={disabled}
-        size="medium"
-        showFirstButton
-        showLastButton
-        sx={{
-          '& .MuiPaginationItem-root': {
-            '&.Mui-selected': {
-              backgroundColor: 'primary.main',
-              color: 'primary.contrastText',
+      <Box sx={{ flexShrink: 0 }}>
+        <MuiPagination
+          count={totalPages}
+          page={currentPage}
+          onChange={handlePageChange}
+          disabled={disabled}
+          size="medium"
+          showFirstButton
+          showLastButton
+          sx={{
+            '& .MuiPaginationItem-root': {
+              '&.Mui-selected': {
+                backgroundColor: 'primary.main',
+                color: 'primary.contrastText',
+              },
+              fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.875rem', lg: '0.875rem', xl: '1rem', '2xl': '1.125rem' },
             },
-          },
-        }}
-      />
+          }}
+        />
+      </Box>
     </Box>
   );
 };
