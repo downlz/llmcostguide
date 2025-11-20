@@ -43,6 +43,7 @@ function AppContent() {
   const [sortConfig, setSortConfig] = React.useState({ key: 'model_name', direction: 'asc' });
   const [currentPage, setCurrentPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState(PAGINATION.defaultPageSize);
+  const [searchTerm, setSearchTerm] = React.useState('');
 
   // Filter providers
   const effectiveProviders = selectedProviders.includes('all') ? 'all' : selectedProviders[0];
@@ -50,7 +51,8 @@ function AppContent() {
   // Calculate offset for pagination
   const offset = (currentPage - 1) * pageSize;
 
-  // Get models data from Supabase using usePricingData hook
+
+  // Fetch models data with dynamic limit/offset and optional search term
   const {
     models,
     isLoading,
@@ -61,15 +63,15 @@ function AppContent() {
   } = usePricingData({
     provider: effectiveProviders,
     sort: sortConfig,
-    limit: pageSize,
-    offset: offset,
+    limit: searchTerm ? 1000 : pageSize,
+    offset: searchTerm ? 0 : offset,
     enableCache: true,
+    search: searchTerm,
   });
 
-  // Apply search filtering
   const searchFields = SEARCH_CONFIG.searchFields;
   const { filteredData, isSearching, searchQuery, setSearchQuery: setHookSearchQuery } = useSearch(
-    models || [], // Use the models from usePricingData (which already handles search logic)
+    models || [],
     searchFields
   );
 
@@ -101,10 +103,13 @@ function AppContent() {
 
   // Update search query from props passed to Header
   const handleSearchChange = (query) => {
+    setSearchTerm(query);
     setHookSearchQuery(query);
     setCurrentPage(1); // Reset to first page when searching
   };
 
+
+  // Render
   return (
     <ThemeProvider theme={lightTheme}>
       <CssBaseline />
@@ -327,9 +332,11 @@ function AppContent() {
           {!isLoading && sortedData.length > 0 && (
             <Pagination
               currentPage={currentPage}
-              totalPages={paginationInfo?.totalPages || Math.ceil((paginationInfo?.total || sortedData.length) / pageSize)}
+              totalPages={isSearching
+                ? Math.ceil((filteredData.length || 0) / pageSize)
+                : paginationInfo?.totalPages || Math.ceil((paginationInfo?.total || sortedData.length) / pageSize)}
               pageSize={pageSize}
-              totalCount={paginationInfo?.total || sortedData.length}
+              totalCount={isSearching ? filteredData.length : (paginationInfo?.total || sortedData.length)}
               onPageChange={handlePageChange}
               onPageSizeChange={handlePageSizeChange}
               disabled={isSearching}
