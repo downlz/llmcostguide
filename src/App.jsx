@@ -46,7 +46,9 @@ function AppContent() {
   const [searchTerm, setSearchTerm] = React.useState('');
 
   // Filter providers
-  const effectiveProviders = selectedProviders.includes('all') ? 'all' : selectedProviders[0];
+  /* Determine which providers are active. If "all" is selected, fetch all models.
+     Otherwise, we will filter the already‑fetched data client‑side based on the selected providers. */
+  const effectiveProviders = selectedProviders.includes('all') ? 'all' : selectedProviders;
 
   // Calculate offset for pagination
   const offset = (currentPage - 1) * pageSize;
@@ -61,7 +63,8 @@ function AppContent() {
     providerStats,
     paginationInfo
   } = usePricingData({
-    provider: effectiveProviders,
+    // Always fetch all models; provider filtering is handled client‑side.
+    provider: 'all',
     sort: sortConfig,
     limit: searchTerm ? 1000 : pageSize,
     offset: searchTerm ? 0 : offset,
@@ -110,6 +113,17 @@ function AppContent() {
 
 
   // Render
+  /* Filter the sorted data according to the provider selection.
+     When "all" is selected we keep the full list; otherwise we keep only rows whose
+     provider matches one of the selected values. */
+  // Determine the data to display based on the selected providers.
+  // If "all" is selected we show the full sorted list; otherwise we filter
+  // the sorted data to include only rows whose provider matches one of the
+  // selected values.
+  const displayedData = effectiveProviders === 'all'
+    ? sortedData
+    : sortedData.filter(m => effectiveProviders.includes(m.provider));
+
   return (
     <ThemeProvider theme={lightTheme}>
       <CssBaseline />
@@ -205,7 +219,7 @@ function AppContent() {
                   fontSize: { xs: '1.5rem', sm: '2rem', md: '2rem', lg: '2.5rem', xl: '2.5rem', '2xl': '3rem' }
                 }}
               >
-                {paginationInfo?.total || sortedData.length}
+                {paginationInfo?.total || displayedData.length}
               </Typography>
               <Typography
                 variant="body2"
@@ -236,7 +250,7 @@ function AppContent() {
                   fontSize: { xs: '1.5rem', sm: '2rem', md: '2rem', lg: '2.5rem', xl: '2.5rem', '2xl': '3rem' }
                 }}
               >
-                {new Set(sortedData.map(m => m.provider)).size}
+                {new Set(displayedData.map(m => m.provider)).size}
               </Typography>
               <Typography
                 variant="body2"
@@ -267,7 +281,7 @@ function AppContent() {
                   fontSize: { xs: '1.5rem', sm: '2rem', md: '2rem', lg: '2.5rem', xl: '2.5rem', '2xl': '3rem' }
                 }}
               >
-                {new Set(sortedData.map(m => m.model_type)).size}
+                {new Set(displayedData.map(m => m.model_type)).size}
               </Typography>
               <Typography
                 variant="body2"
@@ -298,7 +312,7 @@ function AppContent() {
                   fontSize: { xs: '1.5rem', sm: '2rem', md: '2rem', lg: '2.5rem', xl: '2.5rem', '2xl': '3rem' }
                 }}
               >
-                {sortedData.length > 0 ? Math.min(...sortedData.map(m => m.input_price_per_1m_tokens || 0)).toFixed(4) : '0.0000'}
+                {displayedData.length > 0 ? Math.min(...displayedData.map(m => m.input_price_per_1m_tokens || 0)).toFixed(4) : '0.0000'}
               </Typography>
               <Typography
                 variant="body2"
@@ -312,7 +326,7 @@ function AppContent() {
 
           {/* Pricing Table */}
           <PricingTable
-            models={sortedData}
+            models={displayedData}
             isLoading={isLoading}
             onSort={handleTableSort}
             sortConfig={sortConfig}
@@ -329,14 +343,15 @@ function AppContent() {
           />
 
           {/* Pagination */}
-          {!isLoading && sortedData.length > 0 && (
+          {/* Show pagination only when there is data to display */}
+          {!isLoading && displayedData.length > 0 && (
             <Pagination
               currentPage={currentPage}
               totalPages={isSearching
                 ? Math.ceil((filteredData.length || 0) / pageSize)
-                : paginationInfo?.totalPages || Math.ceil((paginationInfo?.total || sortedData.length) / pageSize)}
+                : paginationInfo?.totalPages || Math.ceil((paginationInfo?.total || displayedData.length) / pageSize)}
               pageSize={pageSize}
-              totalCount={isSearching ? filteredData.length : (paginationInfo?.total || sortedData.length)}
+              totalCount={isSearching ? filteredData.length : (paginationInfo?.total || displayedData.length)}
               onPageChange={handlePageChange}
               onPageSizeChange={handlePageSizeChange}
               disabled={isSearching}
