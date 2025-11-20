@@ -30,6 +30,12 @@ export const PROVIDERS = [
     logo: 'https://together.ai/images/logo.png',
     color: '#6366f1',
   },
+  {
+    label: 'Moonshot AI',
+    value: 'Moonshot AI',
+    logo: 'https://www.moonshot.ai/favicon.ico',
+    color: '#8b5cf6',
+  },
 ];
 
 export const MODEL_TYPES = [
@@ -42,8 +48,8 @@ export const MODEL_TYPES = [
 export const SORT_OPTIONS = [
   { label: 'Model Name', value: 'model_name' },
   { label: 'Provider', value: 'provider' },
-  { label: 'Input Price', value: 'input_price_per_1m_tokens' },
-  { label: 'Output Price', value: 'output_price_per_1m_tokens' },
+  { label: 'Input Price (1M)', value: 'input_price_per_1m_tokens' },
+  { label: 'Output Price (1M)', value: 'output_price_per_1m_tokens' },
   { label: 'Context Size', value: 'context_limit' },
   { label: 'Type', value: 'model_type' },
   { label: 'Added Date', value: 'added_on' },
@@ -70,19 +76,19 @@ export const TABLE_COLUMNS = [
   },
   {
     id: 'input_price_per_1m_tokens',
-    label: 'Input Price',
+    label: 'Input Price (1M)',
     sortable: true,
     align: 'right',
   },
   {
     id: 'output_price_per_1m_tokens',
-    label: 'Output Price',
+    label: 'Output Price (1M)',
     sortable: true,
     align: 'right',
   },
   {
     id: 'caching_price_per_1m_tokens',
-    label: 'Caching Price',
+    label: 'Cache Price (1M)',
     sortable: true,
     align: 'right',
   },

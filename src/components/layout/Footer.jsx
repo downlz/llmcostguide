@@ -83,6 +83,17 @@ const Footer = () => {
                 <PublicIcon sx={{ fontSize: { xs: 14, sm: 16, md: 16, lg: 16, xl: 16, '2xl': 16 } }} />
                 <Typography variant="caption">TogetherAI</Typography>
               </Link>
+              <Typography variant="caption" color="text.secondary">•</Typography>
+              <Link
+                href="https://www.moonshot.ai"
+                target="_blank"
+                rel="noopener"
+                underline="hover"
+                sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
+              >
+                <PublicIcon sx={{ fontSize: { xs: 14, sm: 16, md: 16, lg: 16, xl: 16, '2xl': 16 } }} />
+                <Typography variant="caption">Moonshot AI</Typography>
+              </Link>
             </Box>
 
             {/* Right side - Copyright */}

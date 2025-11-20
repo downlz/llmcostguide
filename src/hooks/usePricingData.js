@@ -35,20 +35,32 @@ export const usePricingData = ({
   } = useQuery({
     queryKey: ['models', { provider, search, sort, limit, offset }],
     queryFn: async () => {
-      const queryOptions = {
-        provider: provider === 'all' ? undefined : provider,
-        search: search.trim(),
-        sortBy: sort.key,
-        sortDirection: sort.direction,
-        limit: limit + 1, // Fetch one extra to check if there are more
-        offset,
-      };
-
       if (search.trim()) {
+        // For search, fetch all matching results first, then apply pagination
         const { data, error } = await searchModels(search.trim(), SEARCH_CONFIG.searchFields);
         if (error) throw error;
-        return data || [];
+        
+        let searchResults = data || [];
+        
+        // If there's a provider filter, apply it client-side after search
+        if (provider !== 'all') {
+          searchResults = searchResults.filter(model => model.provider === provider);
+        }
+        
+        // Apply pagination to search results
+        const paginatedResults = searchResults.slice(offset, offset + limit + 1); // +1 to check if there are more
+        return paginatedResults;
       } else {
+        // For non-search queries, use regular database filtering with pagination
+        const queryOptions = {
+          provider: provider === 'all' ? undefined : provider,
+          search: '',
+          sortBy: sort.key,
+          sortDirection: sort.direction,
+          limit: limit + 1, // Fetch one extra to check if there are more
+          offset,
+        };
+
         const { data, error } = await fetchModels(queryOptions);
         if (error) throw error;
         return data || [];
@@ -75,12 +87,27 @@ export const usePricingData = ({
   } = useQuery({
     queryKey: ['models-count', { provider, search }],
     queryFn: async () => {
-      const { count, error } = await getModelCount({
-        provider: provider === 'all' ? undefined : provider,
-        search: search.trim(),
-      });
-      if (error) throw error;
-      return count;
+      if (search.trim()) {
+        // For search, get count from search results
+        const { data, error } = await searchModels(search.trim(), SEARCH_CONFIG.searchFields);
+        if (error) throw error;
+        
+        let searchResults = data || [];
+        
+        // If there's a provider filter, apply it client-side after search
+        if (provider !== 'all') {
+          searchResults = searchResults.filter(model => model.provider === provider);
+        }
+        
+        return searchResults.length;
+      } else {
+        const { count, error } = await getModelCount({
+          provider: provider === 'all' ? undefined : provider,
+          search: search.trim(),
+        });
+        if (error) throw error;
+        return count;
+      }
     },
     staleTime: 2 * 60 * 1000, // 2 minutes
     enabled: enableCache,
@@ -138,9 +165,9 @@ export const usePricingData = ({
     currentPage: Math.floor(offset / limit) + 1,
     totalPages: Math.ceil(count / limit),
     itemsPerPage: limit,
-    hasNextPage,
+    hasNextPage: hasNextPage && count > (offset + limit),
     hasPreviousPage: offset > 0,
-    startIndex: offset + 1,
+    startIndex: count > 0 ? offset + 1 : 0,
     endIndex: Math.min(offset + limit, count),
   };
 

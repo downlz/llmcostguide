@@ -56,10 +56,11 @@ export const formatPrice = (price) => {
 
 /**
  * Format price per 1K tokens
- * @param {any} price - Price per 1M tokens (from database, could be string)
- * @returns {string} Formatted price value (raw from DB)
+ * @param {any} price - Price from database (could be per 1K or per 1M depending on provider)
+ * @param {string} provider - Provider name to determine pricing unit
+ * @returns {string} Formatted price value converted to per 1K tokens
  */
-export const formatPricePer1KTokens = (price) => {
+export const formatPricePer1KTokens = (price, provider) => {
   const cleanPrice = cleanPriceValue(price);
   
   if (cleanPrice === null) {
@@ -70,8 +71,17 @@ export const formatPricePer1KTokens = (price) => {
     return 'Free';
   }
   
-  // Return the raw value from database, properly formatted as currency
-  return formatPrice(cleanPrice);
+  // Convert price to per 1K tokens based on provider
+  let pricePer1K = cleanPrice;
+  if (provider === 'OpenRouter') {
+    // OpenRouter prices are already per 1K tokens
+    pricePer1K = cleanPrice;
+  } else {
+    // Other providers store prices per 1M tokens, so divide by 1000
+    pricePer1K = cleanPrice / 1000;
+  }
+  
+  return formatPrice(pricePer1K);
 };
 
 /**
@@ -176,6 +186,11 @@ export const getProviderBadge = (provider) => {
       color: '#6366f1',
       backgroundColor: '#eef2ff',
       textColor: '#3730a3',
+    },
+    'Moonshot AI': {
+      color: '#8b5cf6',
+      backgroundColor: '#f3e8ff',
+      textColor: '#6d28d9',
     },
   };
   

@@ -69,7 +69,7 @@ function AppContent() {
   // Apply search filtering
   const searchFields = SEARCH_CONFIG.searchFields;
   const { filteredData, isSearching, searchQuery, setSearchQuery: setHookSearchQuery } = useSearch(
-    models || [],
+    models || [], // Use the models from usePricingData (which already handles search logic)
     searchFields
   );
 
@@ -317,7 +317,9 @@ function AppContent() {
             emptyMessage={
               searchQuery.trim()
                 ? `No models found for "${searchQuery}"`
-                : "No models available"
+                : effectiveProviders !== 'all'
+                  ? `No models found for provider "${effectiveProviders}"`
+                  : "No models available"
             }
           />
 

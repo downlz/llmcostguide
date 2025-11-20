@@ -344,7 +344,7 @@ const PricingTable = ({
                     Input Price
                   </Typography>
                   <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                    {formatPricePer1KTokens(model.input_price_per_1m_tokens)}
+                    {formatPricePer1KTokens(model.input_price_per_1m_tokens, model.provider)}
                   </Typography>
                 </Box>
                 <Box>
@@ -352,7 +352,7 @@ const PricingTable = ({
                     Output Price
                   </Typography>
                   <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                    {formatPricePer1KTokens(model.output_price_per_1m_tokens)}
+                    {formatPricePer1KTokens(model.output_price_per_1m_tokens, model.provider)}
                   </Typography>
                 </Box>
                 <Box>
@@ -552,21 +552,21 @@ const PricingTable = ({
                     {/* Input Price */}
                     <TableCell align="right">
                       <Typography variant="body2" sx={{ fontWeight: 500, fontSize: { xs: '0.875rem', sm: '0.875rem', md: '0.875rem', lg: '0.875rem', xl: '0.875rem', '2xl': '1rem' } }}>
-                        {formatPricePer1KTokens(model.input_price_per_1m_tokens)}
+                        {formatPricePer1KTokens(model.input_price_per_1m_tokens, model.provider)}
                       </Typography>
                     </TableCell>
 
                     {/* Output Price */}
                     <TableCell align="right">
                       <Typography variant="body2" sx={{ fontWeight: 500, fontSize: { xs: '0.875rem', sm: '0.875rem', md: '0.875rem', lg: '0.875rem', xl: '0.875rem', '2xl': '1rem' } }}>
-                        {formatPricePer1KTokens(model.output_price_per_1m_tokens)}
+                        {formatPricePer1KTokens(model.output_price_per_1m_tokens, model.provider)}
                       </Typography>
                     </TableCell>
 
                     {/* Caching Price */}
                     <TableCell align="right">
                       <Typography variant="body2" sx={{ fontWeight: 500, fontSize: { xs: '0.875rem', sm: '0.875rem', md: '0.875rem', lg: '0.875rem', xl: '0.875rem', '2xl': '1rem' } }}>
-                        {formatPricePer1KTokens(model.caching_price_per_1m_tokens)}
+                        {formatPricePer1KTokens(model.caching_price_per_1m_tokens, model.provider)}
                       </Typography>
                     </TableCell>
 
