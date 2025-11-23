@@ -16,16 +16,16 @@ import {
 } from '@mui/icons-material';
 import SearchBar from '../common/SearchBar.jsx';
 import ProviderSelector from '../providers/ProviderSelector.jsx';
-import { PROVIDERS } from '../../utils/constants.js';
 
 /**
  * Header component with search, provider selector, and branding
  */
-const Header = ({ 
-  searchQuery, 
-  onSearchChange, 
-  selectedProviders, 
-  onProviderChange 
+const Header = ({
+  searchQuery,
+  onSearchChange,
+  selectedProvider = 'all',
+  providers = [],
+  onProviderChange
 }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -130,9 +130,9 @@ const Header = ({
                 }}
               >
                 <ProviderSelector
-                  value={selectedProviders}
+                  value={selectedProvider}
                   onChange={onProviderChange}
-                  providers={PROVIDERS}
+                  providers={providers}
                 />
               </Box>
 
@@ -194,9 +194,9 @@ const Header = ({
             }}
           >
             <ProviderSelector
-              value={selectedProviders}
+              value={selectedProvider}
               onChange={onProviderChange}
-              providers={PROVIDERS}
+              providers={providers}
             />
             <SearchBar
               value={searchQuery}

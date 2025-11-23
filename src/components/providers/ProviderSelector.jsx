@@ -31,32 +31,17 @@ const ProviderSelector = ({
 
   // Handle provider selection
   const handleChange = (event) => {
-    const newValue = event.target.value;
-    onChange(newValue);
+    onChange(event.target.value);
   };
 
-  // Get display text for selected providers
+  // Get display text for selected provider
   const getDisplayText = () => {
-    if (value.length === 0 || (value.length === 1 && value[0] === 'all')) {
+    if (value === 'all' || !value) {
       return 'All Providers';
     }
-    
-    if (value.length === 1) {
-      return providers.find(p => p.value === value[0])?.label || value[0];
-    }
-    
-    return value.length + ' Providers';
+    return providers.find(p => p.value === value)?.label || value;
   };
 
-  // Get selected providers count
-  const getSelectedCount = () => {
-    if (value.length === 0 || (value.length === 1 && value[0] === 'all')) {
-      return 0;
-    }
-    return value.length;
-  };
-
-  const selectedCount = getSelectedCount();
 
   return (
     <FormControl 
@@ -76,49 +61,27 @@ const ProviderSelector = ({
         {label}
       </InputLabel>
       <Select
-        multiple
         value={value}
         onChange={handleChange}
         label={label}
         onOpen={() => setIsOpen(true)}
         onClose={() => setIsOpen(false)}
         renderValue={(selected) => {
-          if (selected.length === 0) {
-            return (
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <FilterIcon sx={{ fontSize: '1rem', color: theme.palette.text.secondary }} />
-                <Typography variant="body2" color="text.secondary">
-                  All Providers
-                </Typography>
-              </Box>
-            );
-          }
-
-          if (selected.length === 1) {
-            const provider = providers.find(p => p.value === selected[0]);
-            const badgeStyle = provider ? getProviderBadge(provider.value) : {};
-            
-            return (
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Box
-                  sx={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: '50%',
-                    backgroundColor: badgeStyle.color || theme.palette.primary.main,
-                  }}
-                />
-                <Typography variant="body2">
-                  {provider?.label || selected[0]}
-                </Typography>
-              </Box>
-            );
-          }
-
+          const provider = providers.find(p => p.value === selected);
+          const badgeStyle = provider ? getProviderBadge(provider.value) : {};
+          
           return (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box
+                sx={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: '50%',
+                  backgroundColor: badgeStyle.color || theme.palette.primary.main,
+                }}
+              />
               <Typography variant="body2">
-                {selected.length} Providers
+                {getDisplayText()}
               </Typography>
             </Box>
           );
@@ -142,8 +105,9 @@ const ProviderSelector = ({
           },
         }}
       >
+        
         {/* "All Providers" option */}
-        <MenuItem value="all">
+        {/* <MenuItem value="all">
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Box
               sx={{
@@ -155,25 +119,16 @@ const ProviderSelector = ({
             />
             <Typography variant="body2">All Providers</Typography>
           </Box>
-        </MenuItem>
+        </MenuItem> */}
 
         {/* Provider options */}
         {providers.map((provider) => {
           const badgeStyle = getProviderBadge(provider.value);
-          const isSelected = value.includes(provider.value);
           
           return (
-            <MenuItem 
-              key={provider.value} 
+            <MenuItem
+              key={provider.value}
               value={provider.value}
-              sx={{
-                '&.Mui-selected': {
-                  backgroundColor: badgeStyle.backgroundColor + '80',
-                  '&:hover': {
-                    backgroundColor: badgeStyle.backgroundColor + 'CC',
-                  },
-                },
-              }}
             >
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
                 <Box
@@ -186,7 +141,7 @@ const ProviderSelector = ({
                   }}
                 />
                 <Box sx={{ flexGrow: 1 }}>
-                  <Typography variant="body2" fontWeight={isSelected ? 600 : 400}>
+                  <Typography variant="body2">
                     {provider.label}
                   </Typography>
                 </Box>

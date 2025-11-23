@@ -17,6 +17,7 @@ import Pagination from './components/common/Pagination.jsx';
 import useSearch from './hooks/useSearch.js';
 import useSorting from './hooks/useSorting.js';
 import usePricingData from './hooks/usePricingData.js';
+import { useProviders } from './hooks/useProviders.js';
 import { lightTheme } from './styles/themes/index.js';
 
 // Import constants
@@ -39,16 +40,27 @@ const queryClient = new QueryClient({
  */
 function AppContent() {
   // State for search and filtering
-  const [selectedProviders, setSelectedProviders] = React.useState(['all']);
+  const [selectedProvider, setSelectedProvider] = React.useState('all');
   const [sortConfig, setSortConfig] = React.useState({ key: 'model_name', direction: 'asc' });
   const [currentPage, setCurrentPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState(PAGINATION.defaultPageSize);
   const [searchTerm, setSearchTerm] = React.useState('');
 
   // Filter providers
-  /* Determine which providers are active. If "all" is selected, fetch all models.
-     Otherwise, we will filter the already‑fetched data client‑side based on the selected providers. */
-  const effectiveProviders = selectedProviders.includes('all') ? 'all' : selectedProviders;
+  const { data: availableProviders = [] } = useProviders();
+
+  const providers = React.useMemo(() => [
+    {
+      label: 'All Providers',
+      value: 'all',
+      color: '#2196f3',
+    },
+    ...availableProviders.map(p => ({
+      label: p,
+      value: p,
+      color: '#666',
+    })),
+  ], [availableProviders]);
 
   // Calculate offset for pagination
   const offset = (currentPage - 1) * pageSize;
@@ -63,8 +75,7 @@ function AppContent() {
     providerStats,
     paginationInfo
   } = usePricingData({
-    // Always fetch all models; provider filtering is handled client‑side.
-    provider: 'all',
+    provider: selectedProvider,
     sort: sortConfig,
     limit: searchTerm ? 1000 : pageSize,
     offset: searchTerm ? 0 : offset,
@@ -99,8 +110,8 @@ function AppContent() {
   };
 
   // Handle provider change
-  const handleProviderChange = (providers) => {
-    setSelectedProviders(providers.length > 0 ? providers : ['all']);
+  const handleProviderChange = (provider) => {
+    setSelectedProvider(provider || 'all');
     setCurrentPage(1); // Reset to first page when changing provider
   };
 
@@ -116,13 +127,7 @@ function AppContent() {
   /* Filter the sorted data according to the provider selection.
      When "all" is selected we keep the full list; otherwise we keep only rows whose
      provider matches one of the selected values. */
-  // Determine the data to display based on the selected providers.
-  // If "all" is selected we show the full sorted list; otherwise we filter
-  // the sorted data to include only rows whose provider matches one of the
-  // selected values.
-  const displayedData = effectiveProviders === 'all'
-    ? sortedData
-    : sortedData.filter(m => effectiveProviders.includes(m.provider));
+  const displayedData = sortedData;
 
   return (
     <ThemeProvider theme={lightTheme}>
@@ -130,7 +135,8 @@ function AppContent() {
       <Layout
         searchQuery={searchQuery}
         onSearchChange={handleSearchChange}
-        selectedProviders={selectedProviders}
+        selectedProvider={selectedProvider}
+        providers={providers}
         onProviderChange={handleProviderChange}
       >
         <Box>
@@ -250,7 +256,7 @@ function AppContent() {
                   fontSize: { xs: '1.5rem', sm: '2rem', md: '2rem', lg: '2.5rem', xl: '2.5rem', '2xl': '3rem' }
                 }}
               >
-                {new Set(displayedData.map(m => m.provider)).size}
+                {selectedProvider === 'all' ? availableProviders.length : new Set(displayedData.map(m => m.provider)).size}
               </Typography>
               <Typography
                 variant="body2"
@@ -336,8 +342,8 @@ function AppContent() {
             emptyMessage={
               searchQuery.trim()
                 ? `No models found for "${searchQuery}"`
-                : effectiveProviders !== 'all'
-                  ? `No models found for provider "${effectiveProviders}"`
+                : selectedProvider !== 'all'
+                  ? `No models found for provider "${selectedProvider}"`
                   : "No models available"
             }
           />
@@ -347,14 +353,14 @@ function AppContent() {
           {!isLoading && displayedData.length > 0 && (
             <Pagination
               currentPage={currentPage}
-              totalPages={isSearching
-                ? Math.ceil((filteredData.length || 0) / pageSize)
+              totalPages={searchQuery.trim()
+                ? Math.ceil(filteredData.length / pageSize)
                 : paginationInfo?.totalPages || Math.ceil((paginationInfo?.total || displayedData.length) / pageSize)}
               pageSize={pageSize}
-              totalCount={isSearching ? filteredData.length : (paginationInfo?.total || displayedData.length)}
+              totalCount={searchQuery.trim() ? filteredData.length : (paginationInfo?.total || displayedData.length)}
               onPageChange={handlePageChange}
               onPageSizeChange={handlePageSizeChange}
-              disabled={isSearching}
+              disabled={false}
             />
           )}
 
