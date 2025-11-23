@@ -107,10 +107,27 @@ const Footer = () => {
               </Link>
             </Box>
 
-            {/* Right side - Copyright */}
-            <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.875rem', lg: '0.875rem', xl: '0.875rem', '2xl': '0.875rem' } }}>
-              © {currentYear} LLMCostGuide. All rights reserved.
-            </Typography>
+            {/* Right side - GitHub link and Copyright */}
+            <Box sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: { xs: 1, sm: 1.5, md: 2, lg: 2, xl: 2, '2xl': 2 },
+              flexWrap: 'wrap'
+            }}>
+              <Link
+                href="https://github.com/downlz/llmcostguide"
+                target="_blank"
+                rel="noopener"
+                underline="hover"
+                sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
+              >
+                <GitHubIcon sx={{ fontSize: { xs: 14, sm: 16, md: 16, lg: 16, xl: 16, '2xl': 16 } }} />
+                <Typography variant="caption">Github</Typography>
+              </Link>
+              <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.875rem', lg: '0.875rem', xl: '0.875rem', '2xl': '0.875rem' } }}>
+                © {currentYear} LLMCostGuide. All rights reserved.
+              </Typography>
+            </Box>
           </Box>
         </Box>
       </Container>

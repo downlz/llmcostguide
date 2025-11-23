@@ -244,7 +244,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-If you have any questions or suggestions, please open an issue in the [repository](<repository-url>).
+If you have any questions or suggestions, please open an issue in the [repository](https://github.com/downlz/llmcostguide/issues).
 
 ---
 
