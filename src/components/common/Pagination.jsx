@@ -50,14 +50,7 @@ const Pagination = ({
         mt: { xs: 2, sm: 3, md: 3, lg: 4, xl: 4, '2xl': 5 },
         mb: 2,
         flexWrap: { xs: 'wrap', sm: 'wrap', md: 'nowrap' },
-        maxWidth: {
-          xs: '100%',
-          sm: '100%',
-          md: '100%',
-          lg: '100%',
-          xl: '100%',
-          '2xl': '1400px',
-        },
+        maxWidth: '100%',
       }}
     >
       {/* Results Info */}

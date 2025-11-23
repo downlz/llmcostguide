@@ -24,25 +24,12 @@ const Layout = ({ children, ...headerProps }) => {
           pt: { xs: 2, sm: 3, md: 4, lg: 6, xl: 8, '2xl': 10 },
           pb: { xs: 2, sm: 3, md: 4, lg: 4, xl: 4, '2xl': 4 },
           px: { xs: 2, sm: 3, md: 4, lg: 6, xl: 8, '2xl': 12 },
-          maxWidth: {
-            xs: '100%',
-            sm: '100%',
-            md: '100%',
-            lg: '100%',
-            xl: '100%',
-            '2xl': '1400px',
-          },
+          maxWidth: '100%',
         }}
       >
         <Box sx={{
           width: '100%',
-          maxWidth: {
-            xs: '100%',
-            md: '100%',
-            lg: '100%',
-            xl: '100%',
-            '2xl': '1400px',
-          },
+          maxWidth: '100%',
           mx: 'auto',
         }}>
           {children}

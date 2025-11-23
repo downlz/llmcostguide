@@ -160,7 +160,7 @@ function AppContent() {
               variant="h5"
               color="text.primary"
               sx={{
-                maxWidth: { xs: '100%', sm: '90%', md: '90%', lg: '90%' },
+                maxWidth: '100%',
                 mx: 'auto',
                 fontWeight: { xs: 400, sm: 400, md: 400, lg: 400 },
                 fontSize: {
@@ -194,14 +194,7 @@ function AppContent() {
               },
               gap: { xs: 1.5, sm: 2, md: 2.5, lg: 3, xl: 3, '2xl': 4 },
               mb: 4,
-              maxWidth: {
-                xs: '100%',
-                sm: '100%',
-                md: '100%',
-                lg: '100%',
-                xl: '100%',
-                '2xl': '1400px',
-              },
+              maxWidth: '100%',
             }}
           >
             <Paper
