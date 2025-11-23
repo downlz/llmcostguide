@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import {
   QueryClient,
   QueryClientProvider,
@@ -10,8 +10,6 @@ import { Search as SearchIcon } from '@mui/icons-material';
 
 // Import components
 import Layout from './components/layout/Layout.jsx';
-import PricingTable from './components/pricing/PricingTable.jsx';
-import Pagination from './components/common/Pagination.jsx';
 
 // Import hooks and utilities
 import useSearch from './hooks/useSearch.js';
@@ -91,6 +89,9 @@ function AppContent() {
 
   // Apply sorting (client-side sorting for search results)
   const { sortedData, handleSort } = useSorting(filteredData, sortConfig);
+
+  const LazyPricingTable = lazy(() => import('./components/pricing/PricingTable.jsx'));
+  const LazyPagination = lazy(() => import('./components/common/Pagination.jsx'));
 
   // Handle page change
   const handlePageChange = (newPage) => {
@@ -324,37 +325,41 @@ function AppContent() {
           </Box>
 
           {/* Pricing Table */}
-          <PricingTable
-            models={displayedData}
-            isLoading={isLoading}
-            onSort={handleTableSort}
-            sortConfig={sortConfig}
-            error={error}
-            isSearching={isSearching}
-            searchQuery={searchQuery}
-            emptyMessage={
-              searchQuery.trim()
-                ? `No models found for "${searchQuery}"`
-                : selectedProvider !== 'all'
-                  ? `No models found for provider "${selectedProvider}"`
-                  : "No models available"
-            }
-          />
+          <Suspense fallback={<Typography>Loading pricing table...</Typography>}>
+            <LazyPricingTable
+              models={displayedData}
+              isLoading={isLoading}
+              onSort={handleTableSort}
+              sortConfig={sortConfig}
+              error={error}
+              isSearching={isSearching}
+              searchQuery={searchQuery}
+              emptyMessage={
+                searchQuery.trim()
+                  ? `No models found for "${searchQuery}"`
+                  : selectedProvider !== 'all'
+                    ? `No models found for provider "${selectedProvider}"`
+                    : "No models available"
+              }
+            />
+          </Suspense>
 
           {/* Pagination */}
           {/* Show pagination only when there is data to display */}
           {!isLoading && displayedData.length > 0 && (
-            <Pagination
-              currentPage={currentPage}
-              totalPages={searchQuery.trim()
-                ? Math.ceil(filteredData.length / pageSize)
-                : paginationInfo?.totalPages || Math.ceil((paginationInfo?.total || displayedData.length) / pageSize)}
-              pageSize={pageSize}
-              totalCount={searchQuery.trim() ? filteredData.length : (paginationInfo?.total || displayedData.length)}
-              onPageChange={handlePageChange}
-              onPageSizeChange={handlePageSizeChange}
-              disabled={false}
-            />
+            <Suspense fallback={<Typography>Loading pagination...</Typography>}>
+              <LazyPagination
+                currentPage={currentPage}
+                totalPages={searchQuery.trim()
+                  ? Math.ceil(filteredData.length / pageSize)
+                  : paginationInfo?.totalPages || Math.ceil((paginationInfo?.total || displayedData.length) / pageSize)}
+                pageSize={pageSize}
+                totalCount={searchQuery.trim() ? filteredData.length : (paginationInfo?.total || displayedData.length)}
+                onPageChange={handlePageChange}
+                onPageSizeChange={handlePageSizeChange}
+                disabled={false}
+              />
+            </Suspense>
           )}
 
           {/* Connection Status */}
