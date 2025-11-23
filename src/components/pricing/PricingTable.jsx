@@ -317,15 +317,24 @@ const PricingTable = ({
                       fontWeight: 500,
                     }}
                   />
-                  <Chip
-                    icon={<span>{getModelTypeConfig(model.model_type || 'Text').icon}</span>}
-                    label={model.model_type || 'Text'}
-                    size="small"
-                    sx={{
-                      backgroundColor: getModelTypeConfig(model.model_type || 'Text').backgroundColor,
-                      color: getModelTypeConfig(model.model_type || 'Text').color,
-                    }}
-                  />
+                  <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+                    {(model.model_type || 'Text').split(',').map((type, index) => {
+                      const trimmedType = type.trim();
+                      const config = getModelTypeConfig(trimmedType);
+                      return (
+                        <Chip
+                          key={index}
+                          icon={<span>{config.icon}</span>}
+                          label={trimmedType}
+                          size="small"
+                          sx={{
+                            backgroundColor: config.backgroundColor,
+                            color: config.color,
+                          }}
+                        />
+                      );
+                    })}
+                  </Box>
                 </Box>
               </Box>
 
@@ -572,17 +581,26 @@ const PricingTable = ({
 
                     {/* Type */}
                     <TableCell align="center">
-                      <Chip
-                        icon={<span style={{ fontSize: '0.75rem' }}>{getModelTypeConfig(model.model_type || 'Text').icon}</span>}
-                        label={model.model_type || 'Text'}
-                        size="small"
-                        sx={{
-                          backgroundColor: getModelTypeConfig(model.model_type || 'Text').backgroundColor,
-                          color: getModelTypeConfig(model.model_type || 'Text').color,
-                          fontSize: { xs: '0.75rem', sm: '0.75rem', md: '0.75rem', lg: '0.75rem', xl: '0.75rem', '2xl': '0.875rem' },
-                          height: { xs: '24px', sm: '24px', md: '24px', lg: '24px', xl: '24px', '2xl': '26px' },
-                        }}
-                      />
+                      <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', justifyContent: 'center' }}>
+                        {(model.model_type || 'Text').split(',').map((type, index) => {
+                          const trimmedType = type.trim();
+                          const config = getModelTypeConfig(trimmedType);
+                          return (
+                            <Chip
+                              key={index}
+                              icon={<span style={{ fontSize: '0.75rem' }}>{config.icon}</span>}
+                              label={trimmedType}
+                              size="small"
+                              sx={{
+                                backgroundColor: config.backgroundColor,
+                                color: config.color,
+                                fontSize: { xs: '0.75rem', sm: '0.75rem', md: '0.75rem', lg: '0.75rem', xl: '0.75rem', '2xl': '0.875rem' },
+                                height: { xs: '24px', sm: '24px', md: '24px', lg: '24px', xl: '24px', '2xl': '26px' },
+                              }}
+                            />
+                          );
+                        })}
+                      </Box>
                     </TableCell>
 
                     {/* Added On */}

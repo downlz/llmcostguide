@@ -41,6 +41,7 @@ export const PROVIDERS = [
 export const MODEL_TYPES = [
   { label: 'Text', value: 'Text', icon: 'text' },
   { label: 'Images', value: 'Images', icon: 'image' },
+  { label: 'Files', value: 'Files', icon: 'file' },
   { label: 'Videos', value: 'Videos', icon: 'video' },
   { label: 'Embeddings', value: 'Embeddings', icon: 'embed' },
 ];
