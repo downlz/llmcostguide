@@ -115,7 +115,7 @@ export const usePricingData = ({
 
   // Query for checking database connection
   const {
-    data: isConnected = false,
+    data: isConnected,
     isLoading: isLoadingConnection,
     error: connectionError,
   } = useQuery({

@@ -367,18 +367,20 @@ function AppContent() {
             sx={{
               mt: 4,
               p: 3,
-              bgcolor: isConnected ? 'success.lighter' : 'error.lighter',
-              border: `1px solid ${isConnected ? lightTheme.palette.success.light : lightTheme.palette.error.light}`,
+              bgcolor: providerStats?.loadingStates?.isLoadingConnection ? 'info.lighter' : isConnected ? 'success.lighter' : 'error.lighter',
+              border: `1px solid ${providerStats?.loadingStates?.isLoadingConnection ? lightTheme.palette.info.light : isConnected ? lightTheme.palette.success.light : lightTheme.palette.error.light}`,
             }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
-              <SearchIcon sx={{ color: isConnected ? 'success.main' : 'error.main' }} />
-              <Typography variant="h6" color={isConnected ? 'success.dark' : 'error.dark'}>
-                {isConnected ? 'Model Price up-to-date' : 'Connectivity issues found'}
+              <SearchIcon sx={{ color: providerStats?.loadingStates?.isLoadingConnection ? 'info.main' : isConnected ? 'success.main' : 'error.main' }} />
+              <Typography variant="h6" color={providerStats?.loadingStates?.isLoadingConnection ? 'info.dark' : isConnected ? 'success.dark' : 'error.dark'}>
+                {providerStats?.loadingStates?.isLoadingConnection ? 'Checking connection...' : isConnected ? 'Model Price up-to-date' : 'Connectivity issues found'}
               </Typography>
             </Box>
             <Typography variant="body2" color="text.secondary">
-              {isConnected
+              {providerStats?.loadingStates?.isLoadingConnection
+                ? 'Verifying database connectivity...'
+                : isConnected
                 ? `Successfully fetched latest model pricing from providers`
                 : 'Failed to load updated model price. Retry again later.'
               }

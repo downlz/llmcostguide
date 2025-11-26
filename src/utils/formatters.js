@@ -73,12 +73,12 @@ export const formatPricePer1KTokens = (price, provider) => {
   
   // Convert price to per 1K tokens based on provider
   let pricePer1K = cleanPrice;
-  if (provider === 'OpenRouter') {
+  if (provider === 'OpenRouter' && cleanPrice > 0) {
     // OpenRouter prices are already per 1K tokens
-    pricePer1K = cleanPrice;
+    pricePer1K = cleanPrice * 1000000 ;
   } else {
     // Other providers store prices per 1M tokens, so divide by 1000
-    pricePer1K = cleanPrice / 1000;
+    pricePer1K = cleanPrice;
   }
   
   return formatPrice(pricePer1K);
