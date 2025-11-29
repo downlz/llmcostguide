@@ -1,4 +1,5 @@
 import React, { Suspense, lazy } from 'react';
+import { keyframes } from '@emotion/react';
 import {
   QueryClient,
   QueryClientProvider,
@@ -37,6 +38,34 @@ const queryClient = new QueryClient({
  * App content component that uses hooks requiring QueryClient
  */
 function AppContent() {
+  const shimmerWave = keyframes({
+    '0%': {
+      backgroundPosition: '-300% 0',
+    },
+    '100%': {
+      backgroundPosition: '300% 0',
+    },
+  });
+
+  const progressFill = keyframes({
+    '0%': {
+      width: '0%',
+    },
+    '100%': {
+      width: '100%',
+    },
+  });
+
+  const orbitTiny = keyframes({
+    from: {
+      transform: 'rotate(0deg) translateY(16px) rotate(0deg)',
+    },
+    to: {
+      transform: 'rotate(360deg) translateY(16px) rotate(-360deg)',
+    },
+  });
+
+  const particleDelays = ['0s', '1s', '2s'];
   // State for search and filtering
   const [selectedProvider, setSelectedProvider] = React.useState('all');
   const [sortConfig, setSortConfig] = React.useState({ key: 'model_name', direction: 'asc' });
@@ -47,18 +76,23 @@ function AppContent() {
   // Filter providers
   const { data: availableProviders = [] } = useProviders();
 
+  const sortedAvailableProviders = React.useMemo(() =>
+    [...availableProviders].sort((a, b) => a.localeCompare(b)),
+    [availableProviders]
+  );
+
   const providers = React.useMemo(() => [
     {
       label: 'All Providers',
       value: 'all',
       color: '#2196f3',
     },
-    ...availableProviders.map(p => ({
+    ...sortedAvailableProviders.map(p => ({
       label: p,
       value: p,
       color: '#666',
     })),
-  ], [availableProviders]);
+  ], [sortedAvailableProviders]);
 
   // Calculate offset for pagination
   const offset = (currentPage - 1) * pageSize;
@@ -325,7 +359,75 @@ function AppContent() {
           </Box>
 
           {/* Pricing Table */}
-          <Suspense fallback={<Typography>Loading pricing table...</Typography>}>
+          <Suspense fallback={
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                p: 3,
+                width: '100%',
+                minHeight: 100,
+              }}
+            >
+              <Box
+                sx={{
+                  position: 'relative',
+                  display: 'flex',
+                  alignItems: 'center',
+                  width: { xs: 150, sm: 180, md: 200 },
+                  height: 12,
+                  borderRadius: 6,
+                  background: 'rgba(15, 23, 42, 0.9)',
+                  backdropFilter: 'blur(20px)',
+                  WebkitBackdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(0, 245, 255, 0.3)',
+                  boxShadow: '0 0 10px rgba(0, 245, 255, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                  overflow: 'hidden',
+                }}
+              >
+                {/* Shimmering waves */}
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    inset: 0,
+                    backgroundImage: 'linear-gradient(90deg, transparent 0%, rgba(0, 245, 255, 0.2) 25%, rgba(138, 43, 226, 0.2) 50%, transparent 75%)',
+                    backgroundSize: '400% 100%',
+                    animation: `${shimmerWave} 2s linear infinite`,
+                  }}
+                />
+                {/* Gradient progress fill */}
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    height: '100%',
+                    background: 'linear-gradient(90deg, #00F5FF 0%, #3B82F6 50%, #8A2BE2 100%)',
+                    borderRadius: 4,
+                    animation: `${progressFill} 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite`,
+                    boxShadow: '0 0 12px rgba(0, 245, 255, 0.8)',
+                  }}
+                />
+                {/* Tiny orbiting particles */}
+                {particleDelays.map((delay, index) => (
+                  <Box
+                    key={index}
+                    sx={{
+                      position: 'absolute',
+                      top: -4,
+                      left: `${25 + index * 35}%`,
+                      width: 4,
+                      height: 4,
+                      borderRadius: '50%',
+                      background: 'radial-gradient(circle, #00F5FF 0%, #8A2BE2 70%)',
+                      boxShadow: '0 0 8px rgba(0, 245, 255, 0.9)',
+                      animation: `${orbitTiny} 3s linear infinite`,
+                      animationDelay: delay,
+                    }}
+                  />
+                ))}
+              </Box>
+            </Box>
+          }>
             <LazyPricingTable
               models={displayedData}
               isLoading={isLoading}
@@ -347,7 +449,7 @@ function AppContent() {
           {/* Pagination */}
           {/* Show pagination only when there is data to display */}
           {!isLoading && displayedData.length > 0 && (
-            <Suspense fallback={<Typography>Loading pagination...</Typography>}>
+            <Suspense fallback={<></>}>
               <LazyPagination
                 currentPage={currentPage}
                 totalPages={searchQuery.trim()

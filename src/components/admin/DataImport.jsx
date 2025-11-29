@@ -31,6 +31,8 @@ import {
   Close as CloseIcon,
   GetApp as TemplateIcon,
 } from '@mui/icons-material';
+
+import { keyframes } from '@emotion/react';
 import { parseCSVFile, transformModels, validateCSVFile, downloadTemplate } from '../../services/data/importService.js';
 import { importModels } from '../../services/api/supabase.js';
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '../../utils/constants.js';
@@ -166,6 +168,35 @@ const DataImport = ({ onImportComplete }) => {
     setProgress(0);
   };
 
+  const pulseGlow = keyframes({
+    '0%': {
+      textShadow: '0 0 20px rgba(0, 245, 255, 0.5), 0 0 40px rgba(139, 0, 255, 0.3)',
+    },
+    '100%': {
+      textShadow: '0 0 30px rgba(0, 245, 255, 0.8), 0 0 60px rgba(139, 0, 255, 0.6)',
+    },
+  });
+
+  const shimmerWave = keyframes({
+    '0%': {
+      backgroundPosition: '-300% 0',
+    },
+    '100%': {
+      backgroundPosition: '300% 0',
+    },
+  });
+
+  const orbitParticles = keyframes({
+    from: {
+      transform: 'rotate(0deg) translateX(65px) rotate(0deg)',
+    },
+    to: {
+      transform: 'rotate(360deg) translateX(65px) rotate(-360deg)',
+    },
+  });
+
+  const particleDelays = ['0s', '1s', '2s', '3s'];
+
   return (
     <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
       <Typography variant="h4" sx={{ mb: 3, fontWeight: 600 }}>
@@ -279,11 +310,171 @@ const DataImport = ({ onImportComplete }) => {
 
       {/* Progress Bar */}
       {isProcessing && (
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="body2" sx={{ mb: 1 }}>
-            Processing... {progress}%
+        <Box
+          sx={{
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            p: { xs: 3, md: 4 },
+            mb: 3,
+            mx: 'auto',
+            width: { xs: 260, sm: 300, md: 340 },
+            height: { xs: 220, sm: 260, md: 300 },
+            borderRadius: 4,
+            background: 'rgba(15, 23, 42, 0.95)',
+            backdropFilter: 'blur(24px)',
+            WebkitBackdropFilter: 'blur(24px)',
+            border: '1px solid rgba(59, 130, 246, 0.2)',
+            boxShadow:
+              '0 35px 60px -15px rgba(0, 0, 0, 0.5), ' +
+              '0 0 0 1px rgba(255, 255, 255, 0.05), ' +
+              'inset 0 1px 0 rgba(255, 255, 255, 0.1), ' +
+              '0 10px 30px -5px rgba(0, 245, 255, 0.1)',
+            overflow: 'hidden',
+          }}
+        >
+          {/* Subtle geometric patterns */}
+          <Box
+            sx={{
+              position: 'absolute',
+              inset: 0,
+              backgroundImage:
+                'radial-gradient(circle at 25% 75%, rgba(120, 119, 198, 0.15) 0%, transparent 40%), ' +
+                'radial-gradient(circle at 75% 25%, rgba(255, 119, 198, 0.15) 0%, transparent 40%), ' +
+                'radial-gradient(circle at 45% 45%, rgba(59, 130, 246, 0.15) 0%, transparent 40%)',
+              opacity: 0.7,
+            }}
+          />
+          {/* Shimmering waves */}
+          <Box
+            sx={{
+              position: 'absolute',
+              inset: 0,
+              backgroundImage: 'linear-gradient(90deg, transparent 0%, rgba(0, 245, 255, 0.08) 25%, rgba(139, 0, 255, 0.08) 50%, transparent 75%)',
+              backgroundSize: '400% 100%',
+              animation: `${shimmerWave} 4s linear infinite`,
+            }}
+          />
+          {/* Radial Progress Ring */}
+          <Box sx={{ position: 'relative', mb: { xs: 1, md: 2 }, width: { xs: 90, sm: 110, md: 130 }, height: '100%' }}>
+            <svg
+              viewBox="0 0 100 100"
+              width="100%"
+              height="100%"
+              style={{ display: 'block' }}
+            >
+              <defs>
+                <linearGradient id="bgGrad" cx="50%" cy="50%">
+                  <stop offset="0%" stopColor="rgba(255, 255, 255, 0.15)" />
+                  <stop offset="70%" stopColor="rgba(255, 255, 255, 0.03)" />
+                  <stop offset="100%" stopColor="transparent" />
+                </linearGradient>
+                <linearGradient id="progressGradient" x1="15%" y1="15%" x2="85%" y2="85%">
+                  <stop offset="0%" stopColor="#00f5ff" />
+                  <stop offset="45%" stopColor="#3b82f6" />
+                  <stop offset="100%" stopColor="#8b00ff" />
+                </linearGradient>
+              </defs>
+              <circle
+                cx="50"
+                cy="50"
+                r="42"
+                fill="none"
+                stroke="url(#bgGrad)"
+                strokeWidth="5"
+                strokeLinecap="round"
+              />
+              <circle
+                cx="50"
+                cy="50"
+                r="42"
+                fill="none"
+                stroke="url(#progressGradient)"
+                strokeWidth="5"
+                pathLength="1"
+                strokeDasharray="1"
+                strokeDashoffset={1 - progress / 100}
+                strokeLinecap="round"
+                transform="rotate(-90 50 50)"
+                style={{
+                  transition: 'stroke-dashoffset 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                }}
+              />
+            </svg>
+            {/* Central glowing orb */}
+            <Box
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: { xs: 22, md: 28 },
+                height: { xs: 22, md: 28 },
+                borderRadius: '50%',
+                background: 'radial-gradient(circle at 40% 40%, rgba(0, 245, 255, 0.8), transparent 60%), radial-gradient(circle, rgba(139, 0, 255, 0.6), transparent 70%)',
+                boxShadow: '0 0 25px rgba(0, 245, 255, 0.7), 0 0 45px rgba(139, 0, 255, 0.5), inset 0 1px 5px rgba(255, 255, 255, 0.4)',
+                animation: `${pulseGlow} 2s ease-in-out infinite`,
+              }}
+            />
+          </Box>
+          {/* Orbiting particles */}
+          {particleDelays.map((delay, index) => (
+            <Box
+              key={index}
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                width: 5,
+                height: 5,
+                borderRadius: '50%',
+                margin: -2.5,
+                background: 'radial-gradient(circle, #00f5ff 0%, #3b82f6 70%)',
+                boxShadow: '0 0 15px rgba(0, 245, 255, 0.9)',
+                animation: `${orbitParticles} 4s linear infinite`,
+                animationDelay: delay,
+              }}
+            />
+          ))}
+          {/* Loading text */}
+          <Typography
+            variant={{ xs: 'h6', sm: 'h5' }}
+            sx={{
+              fontWeight: 800,
+              background: 'linear-gradient(135deg, #00f5ff 0%, #3b82f6 50%, #8b00ff 100%)',
+              WebkitBackgroundClip: 'text',
+              backgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              textAlign: 'center',
+              zIndex: 2,
+              mb: 0.5,
+              animation: `${pulseGlow} 1.8s ease-in-out infinite alternate`,
+              filter: 'drop-shadow(0 0 8px rgba(0, 245, 255, 0.6))',
+              fontFamily: '"SF Pro Display", -apple-system, BlinkMacSystemFont, Inter, Roboto, sans-serif',
+            }}
+          >
+            Loading your data...
           </Typography>
-          <LinearProgress variant="determinate" value={progress} />
+          {/* Percentage */}
+          <Typography
+            variant={{ xs: 'h4', md: 'h3' }}
+            sx={{
+              fontWeight: 900,
+              background: 'linear-gradient(135deg, #00f5ff 0%, #8b00ff 100%)',
+              WebkitBackgroundClip: 'text',
+              backgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              textAlign: 'center',
+              zIndex: 2,
+              animation: `${pulseGlow} 1.8s ease-in-out infinite alternate-reverse`,
+              filter: 'drop-shadow(0 0 25px rgba(0, 245, 255, 0.9))',
+              fontFamily: '"SF Pro Display", -apple-system, BlinkMacSystemFont, Inter, Roboto, sans-serif',
+            }}
+          >
+            {Math.round(progress)}%
+          </Typography>
         </Box>
       )}
 

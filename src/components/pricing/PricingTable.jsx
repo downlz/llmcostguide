@@ -635,12 +635,6 @@ const PricingTable = ({
 
   return (
     <Box sx={{ width: '100%', position: 'relative' }}>
-      {/* Modern Loading Overlay */}
-      <LoadingOverlay
-        isLoading={isLoading}
-        isSearching={isSearching}
-        searchQuery={searchQuery}
-      />
       
       {isMobile ? renderMobileView() : renderDesktopView()}
     </Box>
